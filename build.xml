@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<project default="compress">
+  <tstamp>
+    <format property="TODAY" pattern="yyyyMMdd-hhmmss" locale="ja,JP"/>
+  </tstamp>
+  <target name="compress">
+    <zip destfile="../GdsFeelGS-src-${TODAY}.zip">
+      <fileset dir="./">
+		<exclude name="**/*.o" />
+		<exclude name="**/*.d" />
+		<exclude name="**/obj" />
+		<exclude name="**/obj/*" />
+		<exclude name="**/*.app" />
+		<exclude name="**/*.app/**" />
+      </fileset>
+    </zip>
+  </target>
+</project>

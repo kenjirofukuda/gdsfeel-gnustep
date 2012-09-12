@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+<gsmarkup>
+<objects>
+  <menu type="main">
+    <menu title="Info">
+      <menuItem title="Info..." action="orderFrontStandardInfoPanel:" />
+      <!--
+      <menuItem title="Help..." 
+               action="orderFrontHelpPanel:" keyEquivalent="?" />
+      -->
+    </menu>
+	<menu title="Document">
+      <menuItem title="Open" action="openDocument:" keyEquivalent="o" />
+	</menu>
+    <menuItem title="Quit" keyEquivalent="q" action="terminate:"/>
+  </menu>
+</objects>
+</gsmarkup>
+<!--
+  vim: ts=2 sw=2 expandtab
+-->

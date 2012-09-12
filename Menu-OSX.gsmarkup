@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+<gsmarkup>
+  <objects>
+    <menu type="main">
+      <menu title="GdsFeel" type="apple">
+        <menuItem title="About GdsFeel" action="orderFrontStandardAboutPanel:"/>
+        <menuSeparator/>
+        <!-- 
+        <menuItem title="Preferences..." action="runPreferencesPanel:"/>
+        -->
+        <menu title="Services" type="services"/>
+        <menuSeparator/>
+        <menuItem title="Hide GdsFeel" action="hide:" keyEquivalent="h"/>
+        <menuItem title="Hide Others" action="hideOtherApplications:"/>
+        <menuItem title="Show All" action="unhideAllApplications:"/>
+        <menuSeparator/>
+        <menuItem title="Quit GdsFeel" keyEquivalent="q" action="terminate:"/>
+      </menu>
+      <menu title="File">
+        <menuItem title="Open..." action="openDocument:" keyEquivalent="o" />
+      </menu>
+    </menu>
+  </objects>
+</gsmarkup>
+<!--
+  vim: ts=2 sw=2 expandtab
+-->

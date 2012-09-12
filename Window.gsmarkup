@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+<gsmarkup>
+
+<objects>
+  <window id="libraryWindow" title="GDSII" center="yes" miniaturizable="no" resizable="yes">
+    <hbox>
+      <scrollView width="150" halign="bottom" valign="expand">
+	<tableView id="structureListView">
+	  <tableColumn identifier="Name" minWidth="100" editable="NO" title="Structure Name"/>
+	</tableView>
+      </scrollView>
+      <view instanceOf="GdsStructureView" id="structureView" valign="expand" halign="expand">
+      </view>
+    </hbox>
+  </window>
+</objects>
+
+<connectors>
+  <outlet source="#NSOwner" target="#libraryWindow" key="window" />
+  <outlet source="#NSOwner" target="#structureListView" key="structureListView" />
+  <outlet source="#NSOwner" target="#structureView" key="structureView" />
+</connectors>
+
+</gsmarkup>
+<!--
+  vim: ts=2 sw=2 expandtab
+-->

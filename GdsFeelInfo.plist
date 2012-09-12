@@ -1,0 +1,16 @@
+{
+  ApplicationName = "GdsFeel Viewer";
+  ApplicationDescription = "GdsFeel Squeak project database library viwer.";
+  Authors = ("SqueakSource kf <gdsfeel_doit@me.com>");
+  Copyright = "Copyright (c) 2008 kf <gdsfeel_doit@me.com>";
+  CopyrightDescription = "This program is released under The GNU GPL";
+  NSTypes = (
+    {
+       NSName = "DB";
+       NSHumanReadableName = "GdsFeel Database Library";
+       NSUnixExtensions = ("DB");
+       NSRole = Editor;
+       NSDocumentClass = GdsLibraryDocument;
+    }
+  );
+}

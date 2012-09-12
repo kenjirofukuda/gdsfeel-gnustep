@@ -1,0 +1,17 @@
+REBUILD TAGS
+============
+find . -name "*.[chm]" | xargs etags --lang=objc 
+find /media/truecrypt2/gnustep/modules/core -name "*.[m]" | xargs etags --lang=objc --append
+find /usr/GNUstep/System/Library/Headers/ -name "*.[h]" | xargs etags --lang=objc --append
+
+
+DOTEMACS
+============
+(add-hook 'c-mode-common-hook
+	  '(lambda()
+	     (c-set-style "gnu")
+	     (c-set-offset 'substatement-open 0)))
+
+DEBUG ON USER DOMAIN
+====================
+make install messages=yes GNUSTEP_INSTALLATION_DOMAIN=USER
