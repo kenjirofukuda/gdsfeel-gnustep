@@ -2,7 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@interface MyDelegate : NSObject
+@interface AppDelegate : NSObject
 {
 }
 - (BOOL) applicationShouldOpenUntitledFile:(NSApplication *)sender;

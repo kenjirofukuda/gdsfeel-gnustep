@@ -3,10 +3,20 @@
 #import <Renaissance/Renaissance.h>
 #import "AppDelegate.h"
 
-@implementation MyDelegate
+@implementation AppDelegate
 - (BOOL) applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
   return NO;
+}
+
+- (void) awakeFromGSMarkup
+{
+  NSLog(@"#awakeFromGSMarkup");
+}
+
+- (void) bundleDidLoadGSMarkup: (NSNotification *)aNotification
+{
+  NSLog(@"#bundleDidLoadGSMarkup:");
 }
 
 @end

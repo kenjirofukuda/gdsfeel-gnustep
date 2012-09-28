@@ -46,17 +46,18 @@
 - (void) windowControllerDidLoadNib: (NSWindowController*) windowController
 {
   [super windowControllerDidLoadNib: windowController];
-  NSDebugLog(@"#windowControllerDidLoadNib:");
-  NSDebugLog(@"windowController = %@", windowController);
-  NSDebugLog(@"window = %@", [windowController window]);
+  NSLog(@"#windowControllerDidLoadNib:");
+  NSLog(@"windowController = %@", windowController);
+  NSLog(@"window = %@", [windowController window]);
   [[windowController window] 
     setTitle: [NSString 
       stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
   [structureListView setDataSource: self];
   [structureListView setDelegate: self];
-  NSDebugLog(@"#windowControllerDidLoadNib: ca");
+  NSLog(@"#windowControllerDidLoadNib: ca");
 }
+
 @end
 
 

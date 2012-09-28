@@ -22,10 +22,10 @@ int
 main(int argc, const char **argv)
 {
   CREATE_AUTORELEASE_POOL(pool);
-  MyDelegate *delegate;
+  AppDelegate *delegate;
 
   [NSApplication sharedApplication];
-  delegate = [MyDelegate new];
+  delegate = [AppDelegate new];
 
   [NSBundle loadGSMarkupNamed: MENU_RESOURCE owner: delegate];
 
