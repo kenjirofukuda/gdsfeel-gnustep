@@ -53,7 +53,7 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   if (_keyName == nil) 
     {
       ASSIGN(_keyName, [[[_path lastPathComponent] 
-			  stringByDeletingPathExtension] uppercaseString]);
+        stringByDeletingPathExtension] uppercaseString]);
     }
   return _keyName;
 }
@@ -82,22 +82,23 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
 - (void) openForReading
 {
-  NSError *theError;
-
   if ([self isOpen] == YES) 
     {
       NSWarnLog(@"Already Opend!");
       return;
     }
+
   NSMutableDictionary *attr;
   attr = [[NSMutableDictionary alloc] init]; 
   [attr setValue:[NSNumber numberWithShort:0755] forKey:NSFilePosixPermissions];
-  BOOL ok = [[NSFileManager defaultManager]
-              createDirectoryAtPath: [self pathToExtract]
-        withIntermediateDirectories: YES 
-                         attributes: attr 
-                              error: &theError];
 
+  NSError *theError;
+  BOOL ok = [[NSFileManager defaultManager]
+                    createDirectoryAtPath: [self pathToExtract]
+              withIntermediateDirectories: YES 
+                               attributes: attr 
+                                    error: &theError];
+ 
   BOOL exists;
   exists = [self isDirectory: [self pathToExtract]];
   if (exists == NO) 
@@ -116,7 +117,9 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 {
   if ([self hasReaderMarker] == NO)
     return;
-  BOOL result =  [[NSFileManager defaultManager] removeFileAtPath: [self pathToExtract] handler: nil];
+  BOOL result =  [[NSFileManager defaultManager] 
+       removeFileAtPath: [self pathToExtract]
+                handler: nil];
   if (result == NO)
     {
       NSWarnLog(@"Can't remove %@", [self pathToExtract]);
@@ -124,7 +127,7 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 }
 
 + (BOOL) isValidDatabase: (NSString *)fileName
-		   error: (NSError **)outError
+       error: (NSError **)outError
 {
   BOOL enabled = [[GdsZipArchiver defaultArchiver] isZipArchiverEnabled];
   if (enabled == NO)
@@ -133,14 +136,14 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   if (result == NO) 
     {
       *outError = 
-	[NSError errorWithDomain: GdsLibraryErrorDomain
-	    	 code: -1 // Oh NO
-		 userInfo: [NSDictionary
-			     dictionaryWithObjectsAndKeys:
-			       _(@"Invalid GdsFeel database library format"), 
-			     NSLocalizedDescriptionKey,
-			     nil]];
-    }
+  [NSError errorWithDomain: GdsLibraryErrorDomain
+                      code: -1 // Oh NO
+                  userInfo: [NSDictionary
+                         dictionaryWithObjectsAndKeys:
+                           _(@"Invalid GdsFeel database library format"), 
+                           NSLocalizedDescriptionKey,
+                           nil]];
+      }
   return result;
 }
 
@@ -170,8 +173,8 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   if (_layers == nil)
     {
       ASSIGN(_layers,
-	     [[GdsLayers alloc] 
-	       initWithPath: [self pathToLayersInformation] library: self]);
+       [[GdsLayers alloc] 
+         initWithPath: [self pathToLayersInformation] library: self]);
     }
   return _layers;
 }
@@ -181,7 +184,7 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 @implementation GdsLibrary (Private)
 - (void) touchReaderMarker
 {
-   [@"touch" writeToFile: [self pathToReaderMarker] atomically: YES];
+  [@"touch" writeToFile: [self pathToReaderMarker] atomically: YES];
 }
 
 - (NSString *) pathToReaderMarker
@@ -225,8 +228,8 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 {
    NSString *fullPath;
    fullPath = [NSString pathWithComponents:
-			  [NSArray arrayWithObjects: [self pathToExtract], 
-				   [structureName stringByAppendingPathExtension: @"structure"], nil]];
+        [NSArray arrayWithObjects: [self pathToExtract], 
+           [structureName stringByAppendingPathExtension: @"structure"], nil]];
    return fullPath;
 } 
 
@@ -241,25 +244,28 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   [self openForReading];
   NSArray *allNames = [[NSFileManager defaultManager]
                         directoryContentsAtPath: [self pathToExtract]];
-  NSDebugLog(@"allNames = %@", allNames);
   NSArray *sortedNames = [allNames sortedArrayUsingSelector: @selector(compare:)];
+  //NSMutableArray *names = [[NSMutableArray alloc] init];
   NSEnumerator *iter = [sortedNames objectEnumerator];
   NSString *name;
   while ((name = [iter nextObject]) != nil) 
     {
       NSString *fullPath;
       fullPath = [NSString pathWithComponents:
-			     [NSArray arrayWithObjects: [self pathToExtract], name, nil]];
+           [NSArray arrayWithObjects: [self pathToExtract], name, nil]];
       if ([self isDirectory: fullPath] == NO)
         continue;
       if ([[name pathExtension] isEqualToString: @"structure"] == YES) 
         {
-	        GdsStructure *newStructure;
-	        newStructure = [[GdsStructure alloc] initWithDirectoryPath: fullPath library: self];
-	        [_structures addObject: newStructure];
-	        [_structureMap setObject: newStructure forKey: [newStructure keyName]];
-	        [newStructure debugLog];
-      }
+          //NSString *keyName = [name stringByDeletingPathExtension];
+          GdsStructure *newStructure;
+          newStructure = [[GdsStructure alloc] 
+               initWithDirectoryPath: fullPath
+                             library: self];
+          [_structures addObject: newStructure];
+          [_structureMap setObject: newStructure forKey: [newStructure keyName]];
+          [newStructure debugLog];
+        }
     }
 }
 
@@ -279,4 +285,5 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 }
 
 @end
+
 // vim: ts=2 sw=2 expandtab

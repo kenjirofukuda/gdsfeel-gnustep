@@ -18,7 +18,7 @@ static int sKeyNumber = 0;
 }
 
 - (id) initWithXMLNode: (GSXMLNode *) xmlNode 
-	     structure: (GdsStructure *) structure
+       structure: (GdsStructure *) structure
 {
   self = [super init];
   if (self) 
@@ -28,9 +28,9 @@ static int sKeyNumber = 0;
       _keyNumber = sKeyNumber;
       _structure = structure;
       if (xmlNode != nil)
-	{
-	  [self loadFromXMLNode: xmlNode];
-	}
+        {
+          [self loadFromXMLNode: xmlNode];
+        }
       return self;
     }
   return nil;
@@ -90,10 +90,10 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
   while (node != nil)
     {
       if ([[node name] isEqualToString: @"vertices"])
-	{
-	  verticesNode = node;
-	  break;
-	} 
+        {
+          verticesNode = node;
+          break;
+        } 
       node = [node nextElement];
     }
   if (verticesNode == nil)
@@ -106,9 +106,9 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
   while (node != nil)
     {
       if ([[node name] isEqualToString: @"xy"])
-	{
-	  [xyArray addPoint: pointFromXYstring([node content])];
-	} 
+        {
+          [xyArray addPoint: pointFromXYstring([node content])];
+        } 
       node = [node nextElement];
     }
   ASSIGN(_xyArray, [NSArray arrayWithArray: xyArray]);
@@ -116,7 +116,7 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 }
 
 + (GdsElement *) elementFromXMLNode: (GSXMLNode *) xmlNode
-			  structure: (GdsStructure *) structure
+        structure: (GdsStructure *) structure
 {
   NSString *typeName = [xmlNode objectForKey: @"type"];
   GdsElement *newElement = nil;
@@ -140,7 +140,7 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
   if (class != Nil)
     {
       newElement = [[class alloc]
-		     initWithXMLNode: xmlNode structure: structure];        
+         initWithXMLNode: xmlNode structure: structure];        
     }
   return newElement;
 }
@@ -249,17 +249,17 @@ getAngle(CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2)
       angle = atan(fabs(y2 - y1)/fabs(x2 - x1));
     if (y2 >= y1)
       {
-	if (x2 >= x1)
-	  angle += 0;
-	else
-	  angle = M_PI - angle;
+  if (x2 >= x1)
+    angle += 0;
+  else
+    angle = M_PI - angle;
       }
     else
       {
-	if (x2 >= x1)
-	  angle = 2 * M_PI - angle;
-	else
-	  angle += M_PI;
+  if (x2 >= x1)
+    angle = 2 * M_PI - angle;
+  else
+    angle += M_PI;
       }
     }
   return angle;
@@ -339,7 +339,7 @@ NSArray *PathToBoundary(GdsPath *path)
   for (i = 1; i < numpoints - 1; i++)
     {
       deltaxy = getDeltaXY(hw, path_points[i - 1],
-			   path_points[i], path_points[i + 1]);
+         path_points[i], path_points[i + 1]);
       points[i].x = path_points[i].x + deltaxy.x;
       points[i].y = path_points[i].y + deltaxy.y;
       points[2 * numpoints - i - 1].x = path_points[i].x - deltaxy.x;
@@ -358,17 +358,17 @@ NSArray *PathToBoundary(GdsPath *path)
   else /* Extended end */
     {
       points[numpoints - 1].x = 
-	path_points[numpoints - 1].x + deltaxy.x + deltaxy.y;
+        path_points[numpoints - 1].x + deltaxy.x + deltaxy.y;
       points[numpoints - 1].y =
-	path_points[numpoints - 1].y + deltaxy.y + deltaxy.x;
+        path_points[numpoints - 1].y + deltaxy.y + deltaxy.x;
       points[numpoints].x = 
-	path_points[numpoints - 1].x - deltaxy.x + deltaxy.y;
+        path_points[numpoints - 1].x - deltaxy.x + deltaxy.y;
       points[numpoints].y = 
-	path_points[numpoints - 1].y - deltaxy.y + deltaxy.x;
+        path_points[numpoints - 1].y - deltaxy.y + deltaxy.x;
     }
   free(path_points);  
   NSArray *result = [NSArray pointsFromNSPointPtr: points 
-			     count: (numpoints * 2 + 1)];
+                                            count: (numpoints * 2 + 1)];
   return result;
 }
 
@@ -445,23 +445,13 @@ NSArray *PathToBoundary(GdsPath *path)
 {
   if (_transform == nil)
     {
-      NSAffineTransformStruct mat;
-      CGFloat rad = _angle * M_PI / 180.0;
-      CGFloat cosRad = cos(rad);
-      CGFloat sinRad = sin(rad);      
-      mat.m11 =  _mag * cosRad;
-      mat.m12 = -_mag * sinRad;
-      mat.m21 =  _mag * sinRad;
-      mat.m22 =  _mag * cosRad;
-      mat.tX  = [self origin].x;
-      mat.tY  = [self origin].y;
-      if (_reflected == YES)
-	{
-	  mat.m12 = -mat.m12;
-	  mat.m22 = -mat.m22;
-	}
       ASSIGN(_transform, [[NSAffineTransform alloc] init]);
-      [_transform setTransformStruct: mat];
+      [_transform translateXBy: [self origin].x yBy: [self origin].y];
+      [_transform rotateByDegrees: _angle];
+      if (_reflected)
+        {
+          [_transform scaleXBy: 1.0 yBy: -1.0];
+        }
     }
   return _transform;
 }
@@ -472,11 +462,11 @@ NSArray *PathToBoundary(GdsPath *path)
     {
       GdsStructure *referenceStructure = nil;
       referenceStructure = 
-	[[_structure library] structureForKey: [self referenceName]]; 
+        [[_structure library] structureForKey: [self referenceName]]; 
       if (referenceStructure == nil)
-	{
-	  NSWarnLog(@"missing strucutre named: %@", [self referenceName]);
-	}
+        {
+          NSWarnLog(@"missing strucutre named: %@", [self referenceName]);
+        }
       ASSIGN(_referenceStructure, referenceStructure);
     }
   return _referenceStructure;
@@ -484,18 +474,19 @@ NSArray *PathToBoundary(GdsPath *path)
 
 - (NSRect) lookupBoundingBox
 {
-  // TODO: apply offset transfom 
+  return [[self lookupOutlinePoints] lookupBoundingBox];
+}
+
+- (NSArray *) basicOutlinePoints
+{
   NSRect structureBounds = [[self referenceStructure] boundingBox];
-  structureBounds.origin.x += [self origin].x;
-  structureBounds.origin.y += [self origin].y;
-  return structureBounds;
+  return  [[NSArray pointsFromNSRect: structureBounds]
+      transformedPoints: [self transform]];
 }
 
 - (NSArray *) lookupOutlinePoints
 {
-  NSRect structureBounds = [[self referenceStructure] boundingBox];
-  return  [[NSArray pointsFromNSRect: structureBounds]
-	    transformedPoints: [self transform]];
+  return [self basicOutlinePoints];
 }
 
 - (void) loadFromXMLNode: (GSXMLNode *) xmlNode
@@ -519,9 +510,24 @@ NSArray *PathToBoundary(GdsPath *path)
   valueStr = [attr valueForKey: @"reflected"];
   if (valueStr == nil)
     {
-      valueStr = @"NO";
+      valueStr = @"false";
     }
-  _reflected = [valueStr boolValue];
+  else
+    {
+      if ([valueStr isEqualToString: @"true"]) 
+        {
+          valueStr = @"true";
+        } 
+      else if ([valueStr isEqualToString: @"false"]) 
+        {
+          valueStr = @"false";
+        } 
+      else
+        {
+          valueStr = @"false";
+        }
+    }
+  _reflected = [valueStr isEqualToString: @"true"] == YES;
 }
 
 - (void) dealloc
@@ -602,10 +608,10 @@ NSArray *PathToBoundary(GdsPath *path)
   while (node != nil)
     {
       if ([[node name] isEqualToString: @"ashape"])
-	{
-	  ashapeNode = node;
-	  break;
-	} 
+        {
+          ashapeNode = node;
+          break;
+        } 
       node = [node nextElement];
     }
   if (ashapeNode == nil)
@@ -669,6 +675,65 @@ NSArray *PathToBoundary(GdsPath *path)
   return _columnSpacing;
 }
 
+- (NSArray *) offsetTransforms
+{
+  if (_offsetTransforms == nil)
+    {
+      int ir, ic;
+      NSMutableArray *transforms;
+      transforms = [[NSMutableArray alloc] init];
+      for (ic = 0; ic < [self columnCount]; ic++)
+        {
+          for (ir = 0; ir < [self rowCount]; ir++)
+            {
+              CGFloat xOffset, yOffset;
+              xOffset = ic * [self columnSpacing]; 
+              yOffset = ir * [self rowSpacing];
+              NSAffineTransform *offsetTransform;
+              offsetTransform = [NSAffineTransform transform];        
+              [offsetTransform translateXBy: xOffset yBy: yOffset];
+              [transforms addObject: offsetTransform];
+            }
+        }
+      ASSIGN(_offsetTransforms, [NSArray arrayWithArray: transforms]);
+      RELEASE(transforms);
+    }
+  return _offsetTransforms;
+}
+
+- (NSArray *) transforms
+{
+  if (_transforms == nil)
+    {
+      NSMutableArray *transforms;
+      transforms = [[NSMutableArray alloc] init];
+      NSEnumerator *iter = [[self offsetTransforms] objectEnumerator];
+      NSAffineTransform *tx;
+      while ((tx = [iter nextObject]) != nil)
+        {
+          NSAffineTransform *newTransform;
+          newTransform = [[NSAffineTransform alloc] 
+               initWithTransform: [self transform]];
+          [newTransform prependTransform: tx];
+          [transforms addObject: newTransform];
+          RELEASE(newTransform);
+        }
+      ASSIGN(_transforms, [NSArray arrayWithArray: transforms]);
+      RELEASE(transforms);
+    }
+  return _transforms;
+}
+
+- (NSArray *) lookupOutlinePoints
+{
+  NSRect bounds = [[self referenceStructure] boundingBox];
+  CGFloat newWidth, newHeight;
+  newWidth = [self columnCount] * [self columnSpacing] + bounds.size.width;
+  newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height; 
+  return  [[NSArray pointsFromNSRect: bounds]
+      transformedPoints: [self transform]];  
+}
+
 - (void) debugLog
 {
   [super debugLog]; 
@@ -678,6 +743,5 @@ NSArray *PathToBoundary(GdsPath *path)
   NSDebugLog(@"columnSpacing = %f", [self columnSpacing]);
 }
 @end
-
 
 // vim: sw=2 ts=2 expandtab

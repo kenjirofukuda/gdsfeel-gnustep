@@ -4,7 +4,7 @@
 
 @implementation NSArray (Elements)
 - (void) getPrimitivesOn: (NSMutableArray *) primitives
-	    referencesOn: (NSMutableArray *) references
+            referencesOn: (NSMutableArray *) references
 {
   NSEnumerator *iter;
   iter = [self objectEnumerator];
@@ -12,15 +12,15 @@
   while ((element = [iter nextObject]) != nil)
     {
       if ([element isReference])
-	{
-	  if (references != nil)
-	    [references addObject: element];
-	}
+        {
+          if (references != nil)
+            [references addObject: element];
+        }
       else
-	{
-	  if (primitives != nil)
-	    [primitives addObject: element];
-	}
+        {
+          if (primitives != nil)
+            [primitives addObject: element];
+        }
     }
 }
 
@@ -49,3 +49,5 @@
 }
 
 @end
+
+// vim: ts=2 sw=2 expandtab

@@ -36,6 +36,6 @@ extern NSString * const GdsLibraryErrorDomain;
 - (void) closeForReading;
 - (void) debugLog;
 + (BOOL) isValidDatabase: (NSString *)fileName
-		   error: (NSError **) outError;
+                   error: (NSError **) outError;
 @end
 // vim: filetype=objc ts=2 sw=2 expandtab

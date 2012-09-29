@@ -10,9 +10,19 @@
                action="orderFrontHelpPanel:" keyEquivalent="?" />
       -->
     </menu>
-	<menu title="Document">
+    <menu title="Document">
       <menuItem title="Open" action="openDocument:" keyEquivalent="o" />
-	</menu>
+    </menu>
+    <menu title="View">
+      <menuItem title="Zoom 0.5" action="zoomHalf:" />
+      <menuItem title="Fit" action="fit:" />
+      <menuItem title="Zoom 2.0" action="zoomDouble:" />
+      <menuSeparator />
+      <menuItem title="Move left" action="viewMoveLeft:" />
+      <menuItem title="Move right" action="viewMoveRight:" />
+      <menuItem title="Move up" action="viewMoveUp:" />
+      <menuItem title="Move down" action="viewMoveDown:" />
+    </menu>
     <menuItem title="Quit" keyEquivalent="q" action="terminate:"/>
   </menu>
 </objects>

@@ -26,8 +26,8 @@
 }
 
 - (BOOL) readFromURL: (NSURL *) absoluteURL 
-	      ofType: (NSString *) typeName 
-	       error: (NSError **) outError
+              ofType: (NSString *) typeName 
+               error: (NSError **) outError
 {
   NSString *fileName = [absoluteURL path];
   NSDebugLog(@"open => %@", fileName);
@@ -46,18 +46,17 @@
 - (void) windowControllerDidLoadNib: (NSWindowController*) windowController
 {
   [super windowControllerDidLoadNib: windowController];
-  NSLog(@"#windowControllerDidLoadNib:");
-  NSLog(@"windowController = %@", windowController);
-  NSLog(@"window = %@", [windowController window]);
+  NSDebugLog(@"#windowControllerDidLoadNib:");
+  NSDebugLog(@"windowController = %@", windowController);
+  NSDebugLog(@"window = %@", [windowController window]);
   [[windowController window] 
     setTitle: [NSString 
       stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
   [structureListView setDataSource: self];
   [structureListView setDelegate: self];
-  NSLog(@"#windowControllerDidLoadNib: ca");
+  NSDebugLog(@"#windowControllerDidLoadNib: ca");
 }
-
 @end
 
 
@@ -73,7 +72,7 @@
 
 - (id)          tableView: (NSTableView*)aTableView 
 objectValueForTableColumn: (NSTableColumn*)aTableColumn 
-		      row: (int)rowIndex
+                      row: (int)rowIndex
 {
   if ([[aTableColumn identifier] isEqualToString: @"Name"])
     {
@@ -90,7 +89,7 @@ objectValueForTableColumn: (NSTableColumn*)aTableColumn
   NSDebugLog(@"#tableViewSelectionDidChange: %@", aNotification);
   NSString *structureName;
   structureName = [[_library structureNames] 
-		    objectAtIndex: [structureListView selectedRow]];
+        objectAtIndex: [structureListView selectedRow]];
   GdsStructure *structure;
   structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
@@ -106,3 +105,5 @@ objectValueForTableColumn: (NSTableColumn*)aTableColumn
   NSDebugLog(@"structureListView = %@", structureListView);
 }
 @end
+
+// vim: sw=2 ts=2 expandtab filetype=objc

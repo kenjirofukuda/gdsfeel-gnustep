@@ -13,6 +13,7 @@ static GdsZipArchiver *sDefaultArchiver = nil;
 @implementation GdsZipArchiver
 - (NSString*) pathToZipCommand
 {
+// TODO: remove path
 #ifdef __MINGW32__
   return @"C:/Program Files/GnuWin32/bin/zip.exe";
 #else
@@ -22,6 +23,7 @@ static GdsZipArchiver *sDefaultArchiver = nil;
 
 - (NSString*) pathToUnzipCommand
 {
+// TODO: remove path
 #ifdef __MINGW32__
   return @"C:/Program Files/GnuWin32/bin/unzip.exe";
 #else
@@ -66,8 +68,8 @@ static GdsZipArchiver *sDefaultArchiver = nil;
   resultString = [self execArguments:
                     [NSArray arrayWithObjects: @"-t", fileName, nil]
                              extract: YES
-				                    exitCode: &code];
-  NSDebugLog(resultString);
+                            exitCode: &code];
+  NSDebugLog(@"%@", resultString);
   return code == 0;
 }
 
@@ -79,8 +81,8 @@ static GdsZipArchiver *sDefaultArchiver = nil;
   resultString = [self execArguments:
     [NSArray arrayWithObjects: fileName, @"-d", directoryName, nil]
                              extract: YES
- 				            exitCode: &code];
-  NSDebugLog(resultString);
+                             exitCode: &code];
+  NSDebugLog(@"%@", resultString);
   return code == 0;
 }
 
@@ -123,4 +125,4 @@ static GdsZipArchiver *sDefaultArchiver = nil;
 }
 @end
 
-// vim: ts=2 sw=2 expandtab
+// vim: filetype=objc ts=2 sw=2 expandtab

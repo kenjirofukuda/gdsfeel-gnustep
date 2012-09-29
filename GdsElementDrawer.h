@@ -14,3 +14,23 @@
 
 + (Class) drawerClassForElement: (GdsElement *) element;
 @end
+
+@interface GdsPrimitiveDrawer : GdsElementDrawer
+@end
+
+@interface GdsBoundaryDrawer : GdsPrimitiveDrawer
+@end
+
+@interface GdsPathDrawer : GdsPrimitiveDrawer
+@end
+
+@interface GdsReferenceDrawer : GdsElementDrawer
+@end
+
+@interface GdsSrefDrawer : GdsReferenceDrawer
+@end
+
+@interface GdsArefDrawer : GdsSrefDrawer
+@end
+
+// vim: sw=2 ts=2 expandtab filetype=objc

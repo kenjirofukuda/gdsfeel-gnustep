@@ -40,9 +40,13 @@
 {
   Class class = [GdsElementDrawer class];
   NSString *className = NSStringFromClass([element class]);
-  if ([className isEqualToString: @""] == YES)
+  if ([className isEqualToString: @"GdsSref"] == YES)
     {
-      
+      return [GdsSrefDrawer class];
+    }
+  if ([className isEqualToString: @"GdsAref"] == YES)
+    {
+      return [GdsArefDrawer class];
     }
   return class;
 }
@@ -66,7 +70,8 @@
   [self strokePoints: points transform: nil];
 }
 
-- (void) strokePoints: (NSArray *) points transform: (NSAffineTransform *) transform
+- (void) strokePoints: (NSArray *) points 
+	    transform: (NSAffineTransform *) transform
 {
   NSBezierPath *path = [NSBezierPath bezierPath];
   int i;
@@ -84,3 +89,75 @@
   [path stroke];
 }
 @end
+
+@implementation GdsPrimitiveDrawer
+@end
+
+@implementation GdsBoundaryDrawer
+@end
+
+@implementation GdsPathDrawer
+@end
+
+@implementation GdsReferenceDrawer
+- (void) draw
+{
+  GdsStructure *refStructure;
+  GdsReferenceElement *element;
+  element = (GdsReferenceElement *) _element;
+  refStructure = [element referenceStructure];
+  if (refStructure == nil)
+    {
+      return;
+    }
+  if ([_structureView inLiveResize]) 
+    {
+      [super draw];
+    }
+  else
+    {
+      [[_structureView viewport] pushTransform: [element transform]];
+      [_structureView drawElements: [refStructure elements]];
+      (void) [[_structureView viewport] popTransform];
+    }
+}
+@end
+
+@implementation GdsSrefDrawer
+@end
+
+@implementation GdsArefDrawer
+- (void) draw
+{
+  GdsStructure *refStructure;
+  GdsAref *element;
+  element = (GdsAref *) _element;
+  refStructure = [element referenceStructure];
+  if (refStructure == nil)
+    {
+      return;
+    }
+  NSAffineTransform *tx;
+  NSEnumerator *iter;
+
+  if ([_structureView inLiveResize]) 
+    {
+      [super draw];
+    }
+  else
+    {
+      [[_structureView viewport] pushTransform: [element transform]];
+      iter = [[element offsetTransforms] objectEnumerator]; 
+      while ((tx = [iter nextObject]) != nil)
+	{
+	  [[_structureView viewport] pushTransform: tx];
+	  [_structureView drawElements: [refStructure elements]];
+	  (void) [[_structureView viewport] popTransform];	   
+	  [_structureView drawElements: [refStructure elements]];
+	}
+      (void) [[_structureView viewport] popTransform];	   
+    }
+}
+@end
+
+// vim: sw=2 ts=2 expandtab filetype=objc

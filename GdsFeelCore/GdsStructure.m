@@ -14,7 +14,7 @@
 
 @implementation GdsStructure
 - initWithDirectoryPath: (NSString *) directoryPath
-		library: (GdsLibrary *) library
+    library: (GdsLibrary *) library
 {
   self = [super init];
   if (self != nil)
@@ -47,7 +47,7 @@
   if (_name == nil)
     {
       ASSIGN(_name, [[_directoryPath lastPathComponent] 
-		      stringByDeletingPathExtension]);
+          stringByDeletingPathExtension]);
     }
   return _name;
 }
@@ -103,7 +103,7 @@
 {
   NSMutableArray *revisions = [NSMutableArray new];
   NSArray *allNames = [[NSFileManager defaultManager] 
-			directoryContentsAtPath: _directoryPath];
+      directoryContentsAtPath: _directoryPath];
   NSString *name;
   NSEnumerator *iter = [allNames objectEnumerator];
   while ((name = [iter nextObject]) != nil)
@@ -111,15 +111,15 @@
       NSArray *items = [name componentsSeparatedByString: @"."];
       NSDebugLog(@"%@", [items description]);
       if ([items count] < 3)
-	{ 
-	  NSWarnLog(@"Invarid structure format");
-	  continue;     
-	}
-      NSString *structureName = [items objectAtIndex: 0];
+        { 
+          NSWarnLog(@"Invarid structure format");
+          continue;     
+        }
+      // NSString *structureName = [items objectAtIndex: 0];
       NSString *rev = [items objectAtIndex: 1];
       NSNumber *revision = [NSNumber numberWithInt: [rev intValue]];
       [revisions addObject: revision]; 
-      NSString *extension = [items objectAtIndex: 2];
+      // NSString *extension = [items objectAtIndex: 2];
     }
 
   if ([revisions count] == 0)
@@ -132,15 +132,15 @@
 {
   NSString *fileName;
   fileName = [[NSArray arrayWithObjects:
-			 [self name], 
-		       [[NSNumber numberWithInt: [self lastRevisionNumber]]
-			 stringValue],
-		       @"gdsfeelbeta", nil] 
-	       componentsJoinedByString: @"."];
+                        [self name], 
+                        [[NSNumber numberWithInt: [self lastRevisionNumber]]
+                        stringValue],
+                        @"gdsfeelbeta", nil] 
+                componentsJoinedByString: @"."];
   
   return [NSString pathWithComponents: 
-		     [NSArray arrayWithObjects:
-				_directoryPath, fileName, nil]];
+         [NSArray arrayWithObjects:
+        _directoryPath, fileName, nil]];
 }
 
 - (void) changePermissions
@@ -148,8 +148,8 @@
   NSUInteger perm;
   NSMutableDictionary *fileAttributes;
   fileAttributes = [[[NSFileManager defaultManager] 
-		      fileAttributesAtPath: _directoryPath
-		      traverseLink: YES] mutableCopy];
+          fileAttributesAtPath: _directoryPath
+                  traverseLink: YES] mutableCopy];
   
   perm = [fileAttributes filePosixPermissions];
   if (perm == NSNotFound)
@@ -161,15 +161,16 @@
   if ((perm & 0100) == 0)
      {
        [[NSFileManager defaultManager]
-	 changeFileAttributes: 
-	   [NSDictionary dictionaryWithObjectsAndKeys:
-			   [NSNumber numberWithUnsignedInt: (perm | 0700)], 
-			 NSFilePosixPermissions, nil] atPath: _directoryPath];
+         changeFileAttributes: 
+           [NSDictionary dictionaryWithObjectsAndKeys:
+             [NSNumber numberWithUnsignedInt: (perm | 0700)], 
+             NSFilePosixPermissions, nil] 
+                       atPath: _directoryPath];
      }
   RELEASE(fileAttributes);
   fileAttributes = [[[NSFileManager defaultManager] 
-		      fileAttributesAtPath: _directoryPath
-		      traverseLink: YES] mutableCopy];
+                     fileAttributesAtPath: _directoryPath
+                             traverseLink: YES] mutableCopy];
   perm = [fileAttributes filePosixPermissions];
   NSDebugLog(@"after  perm = %o", perm);
   RELEASE(fileAttributes);
@@ -186,7 +187,7 @@
     }
   [self changePermissions];
   NSString *pathToData = [self pathWithRevisionNumber: 
-				 [self lastRevisionNumber]];
+         [self lastRevisionNumber]];
   GSXMLParser *parser = [GSXMLParser parserWithContentsOfFile: pathToData];
   if (parser == nil)
     {
@@ -212,11 +213,13 @@
       GdsElement *newElement;
       newElement = [GdsElement elementFromXMLNode: node structure: self];
       if (newElement != nil)
-	{
-	  [_elements addObject: newElement];
-	  [newElement debugLog];
-	}
+        {
+          [_elements addObject: newElement];
+          [newElement debugLog];
+        }
       node = [node nextElement];
     }
 }
 @end
+
+// vim: ts=2 sw=2 expandtab

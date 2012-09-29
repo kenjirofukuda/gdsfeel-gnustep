@@ -9,6 +9,7 @@ extern NSString *GdsStructureDidChangeNotification;
 {
   GdsStructure *_structure;
   GdsViewport *_viewport;
+  NSImage *_offImage;
 }
 - (id) initWithFrame: (NSRect) frame;
 - (void) dealloc;
@@ -20,6 +21,7 @@ extern NSString *GdsStructureDidChangeNotification;
 - (void) drawRect: (NSRect) rect;
 - (BOOL) acceptsFirstResponder;
 - (BOOL) acceptsFirstMouse: (NSEvent *) event;
+- (void) drawElements: (NSArray *) elements;
 @end
 
 @interface GdsStructureView (Actions)
@@ -31,3 +33,5 @@ extern NSString *GdsStructureDidChangeNotification;
 - (IBAction) viewMoveRight: (id) sender;
 - (IBAction) viewMoveLeft: (id) sender;
 @end
+
+// vim: sw=2 ts=2 expandtab filetype=objc

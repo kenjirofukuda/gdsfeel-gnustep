@@ -10,7 +10,9 @@
 	  <tableColumn identifier="Name" minWidth="100" editable="NO" title="Structure Name"/>
 	</tableView>
       </scrollView>
-      <view instanceOf="GdsStructureView" id="structureView" valign="expand" halign="expand">
+      <view instanceOf="GdsStructureView" 
+	    id="structureView" valign="expand" halign="expand"
+	    width="512" height="342" >
       </view>
     </hbox>
   </window>

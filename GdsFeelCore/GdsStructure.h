@@ -23,4 +23,4 @@
 - (NSRect) boundingBox;
 - (NSArray *) elements;
 @end
-// vim: filetype=objc
+// vim: filetype=objc ts=2 sw=2 expandtab

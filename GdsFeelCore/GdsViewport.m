@@ -3,6 +3,7 @@
 @interface GdsViewport (Private)
 - (NSAffineTransform *) _lookupTransform;
 - (NSAffineTransform *) _fittingTransform;
+- (NSAffineTransform *) basicTransform;
 - (void) _damageTransform;
 @end
 
@@ -13,12 +14,14 @@
   if (self != nil)
     {
       ASSIGN(_structure, structure);
+      ASSIGN(_transformStack, [[NSMutableArray alloc] init]);
     }
   return self;
 }
 
 - (void) dealloc
 {
+  RELEASE(_transformStack);
   RELEASE(_structure);
   RELEASE(_transform);
   [super dealloc];
@@ -28,7 +31,16 @@
 {
   if (_transform == nil)
     {
-      ASSIGN(_transform, [self _lookupTransform]);
+      NSAffineTransform *newTransform;
+      NSAffineTransform *tx;
+      newTransform = [NSAffineTransform transform];
+      [newTransform prependTransform: [self basicTransform]];
+      NSEnumerator *iter = [_transformStack objectEnumerator];
+      while ((tx = [iter nextObject]) != nil)
+        {
+          [newTransform prependTransform: tx];
+        }
+      ASSIGN(_transform, newTransform);
     }
   return _transform;
 }
@@ -57,6 +69,11 @@
   [self _damageTransform];
 }
 
+- (CGFloat) scale
+{
+  return _scale;
+}
+
 - (void) setScale: (CGFloat) newScale
 {
   if (_scale == newScale)
@@ -77,6 +94,34 @@
   [self _damageTransform];
 }
 
+- (NSRect) bounds
+{
+  NSRect pixelBounds;
+  NSRect viewBounds;
+  NSAffineTransform *inverseTransform;
+  pixelBounds = NSMakeRect(0.0, 0.0, _portSize.width, _portSize.height);
+  inverseTransform = [[NSAffineTransform alloc] initWithTransform: [self transform]];
+  [inverseTransform invert];
+  viewBounds.origin = [inverseTransform transformPoint: pixelBounds.origin];
+  viewBounds.size = [inverseTransform transformSize: pixelBounds.size];
+  return viewBounds;
+}
+
+-(void) viewMoveFractionX: (CGFloat) aXfraction y: (CGFloat) aYfraction
+{
+  NSRect viewBounds;
+  CGFloat xDelta, yDelta;
+  NSPoint newCenter;
+
+  viewBounds = [self bounds];
+  xDelta = viewBounds.size.width * aXfraction;
+  yDelta = viewBounds.size.height * aYfraction;
+  newCenter = [self center];
+  newCenter.x += xDelta;
+  newCenter.y += yDelta;
+  [self setCenter: newCenter];
+}
+
 - (void) fit
 {
   [self setBounds: [_structure boundingBox]];
@@ -84,13 +129,19 @@
 
 - (void) pushTransform: (NSAffineTransform *) transform
 {
-  // FIXME
+  [_transformStack addObject: transform];
+  DESTROY(_transform);
 }
 
 - (NSAffineTransform *) popTransform
 {
-  // FIXME
-  return nil;
+  NSAffineTransform *result = nil;
+  if ([_transformStack count] == 0)
+    return nil;
+  result = [_transformStack lastObject];
+  [_transformStack removeLastObject];
+  DESTROY(_transform);
+  return result;
 }
 
 - (NSAffineTransform *) fittingTransform
@@ -101,8 +152,18 @@
 @end
 
 @implementation GdsViewport (Private)
+- (NSAffineTransform *) basicTransform
+{
+  if (_basicTransform == nil)
+    {
+      ASSIGN(_basicTransform, [self _lookupTransform]);
+    }
+  return _basicTransform;
+}
+
 - (void) _damageTransform
 {
+  DESTROY(_basicTransform);
   DESTROY(_transform);
 }
 
@@ -135,3 +196,5 @@
   return tx;
 }
 @end
+
+// vim: ts=2 sw=2 expandtab

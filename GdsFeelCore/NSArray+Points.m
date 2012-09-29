@@ -55,13 +55,13 @@ static float BIGVAL = FLT_MAX / 2.0;
     {
       NSPoint xy = [v pointValue];
       if (xmin > xy.x)
-	xmin = xy.x;
+        xmin = xy.x;
       if (ymin > xy.y)
-	ymin = xy.y;
+        ymin = xy.y;
       if (xmax < xy.x)
-	xmax = xy.x;
+        xmax = xy.x;
       if (ymax < xy.y)
-	ymax = xy.y;
+        ymax = xy.y;
     }
   return NSMakeRect(xmin, ymin, xmax - xmin, ymax - ymin);
 }
@@ -80,7 +80,7 @@ static float BIGVAL = FLT_MAX / 2.0;
 }
 
 + (NSArray *) pointsFromNSPointPtr: (NSPoint *) points 
-			     count: (int) countPoints
+                             count: (int) countPoints
 {
   NSMutableArray *array = [NSMutableArray new];
   [array addNSPointPtr: points count: countPoints];
@@ -98,3 +98,5 @@ static float BIGVAL = FLT_MAX / 2.0;
 }
 
 @end
+
+// vim: ts=2 sw=2 expandtab

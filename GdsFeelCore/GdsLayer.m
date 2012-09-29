@@ -100,10 +100,10 @@
   while (node != nil)
     {
       if ([[node name] isEqualToString: @"color"])
-	{
-	  colorNode = node;
-	  break;
-	} 
+        {
+          colorNode = node;
+          break;
+        } 
       node = [node nextElement];
     }
   if (colorNode)
@@ -147,13 +147,14 @@
       GdsLayer *newLayer;
       newLayer = [[GdsLayer alloc] initWithXMLNode: node];
       if (newLayer != nil)
-	{
-	  [_layerMap 
-	    setValue: newLayer 
-	    forKey: [[NSNumber numberWithInt: [newLayer number]] stringValue]];
-	}
+        {
+          [_layerMap setValue: newLayer 
+                       forKey: [[NSNumber numberWithInt: [newLayer number]] stringValue]];
+        }
       node = [node nextElement];
     }
 }
 
 @end
+
+// vim: ts=2 sw=2 expandtab

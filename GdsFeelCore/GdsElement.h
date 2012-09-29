@@ -14,7 +14,7 @@
 }
 - (id) init;
 - (id) initWithXMLNode: (GSXMLNode *) xmlNode 
-	     structure: (GdsStructure *) structure;
+             structure: (GdsStructure *) structure;
 - (void) dealloc;
 - (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
 
@@ -28,7 +28,7 @@
 - (BOOL) isReference;
 
 + (GdsElement *) elementFromXMLNode: (GSXMLNode *) xmlNode
-                  	  structure: (GdsStructure *) structure;
+                          structure: (GdsStructure *) structure;
 
 - (NSArray *) lookupOutlinePoints;
 - (NSRect) lookupBoundingBox;
@@ -82,6 +82,7 @@
 - (float) mag;
 - (BOOL) reflected;
 - (NSPoint) origin;
+- (NSArray *) basicOutlinePoints;
 - (GdsStructure *) referenceStructure;
 - (NSAffineTransform *) transform;
 @end
@@ -96,6 +97,8 @@
   int _columnCount;
   float _rowSpacing;
   float _columnSpacing;
+  NSArray *_offsetTransforms;
+  NSArray *_transforms;
 }
 - (id) init;
 - (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
@@ -106,6 +109,8 @@
 - (int) columnCount;
 - (float) rowSpacing;
 - (float) columnSpacing;
+- (NSArray *) offsetTransforms;
+- (NSArray *) transforms;
 @end
 
 // vim: ts=2 sw=2 expandtab filetype=objc 

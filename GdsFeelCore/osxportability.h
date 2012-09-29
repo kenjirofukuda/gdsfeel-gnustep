@@ -7,3 +7,5 @@
 #define NSDebugLog NSLog
 #endif
 #endif
+
+// vim: filetype=objc ts=2 sw=2 expandtab
