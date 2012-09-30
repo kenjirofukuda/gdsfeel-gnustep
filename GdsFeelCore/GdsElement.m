@@ -18,7 +18,7 @@ static int sKeyNumber = 0;
 }
 
 - (id) initWithXMLNode: (GSXMLNode *) xmlNode 
-       structure: (GdsStructure *) structure
+             structure: (GdsStructure *) structure
 {
   self = [super init];
   if (self) 
@@ -116,7 +116,7 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 }
 
 + (GdsElement *) elementFromXMLNode: (GSXMLNode *) xmlNode
-        structure: (GdsStructure *) structure
+                          structure: (GdsStructure *) structure
 {
   NSString *typeName = [xmlNode objectForKey: @"type"];
   GdsElement *newElement = nil;
@@ -172,17 +172,17 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 - (void) debugLog
 {
   NSDebugLog(@"-------------------------------");
-  NSDebugLog(@"type = %@", [self typeName]);
+  NSDebugLog(@"       type = %@", [self typeName]);
   NSDebugLog(@"description = %@", [self description]);
-  NSDebugLog(@"keyNumber = %d", [self keyNumber]);
+  NSDebugLog(@"  keyNumber = %d", [self keyNumber]);
 }
 @end
 
 @implementation GdsElement (Private)
 - (void) debugKeyValueLog
 {
-  NSDebugLog(@"type = %@", [self valueForKey:@"typeName"]);
-  NSDebugLog(@"keyNumber = %@", [self valueForKey:@"keyNumber"]);
+  NSDebugLog(@"       type = %@", [self valueForKey:@"typeName"]);
+  NSDebugLog(@"  keyNumber = %@", [self valueForKey:@"keyNumber"]);
   NSDebugLog(@"bound width = %f", NSWidth([self boundingBox]));
 }
 
@@ -222,9 +222,9 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 - (void) debugLog
 {
   [super debugLog];
-  NSDebugLog(@"dataType = %d", [self dataType]);
+  NSDebugLog(@"   dataType = %d", [self dataType]);
   NSDebugLog(@"layerNumber = %d", [self layerNumber]);
-  NSDebugLog(@"vertices = %@", [self vertices]);
+  NSDebugLog(@"   vertices = %@", [self vertices]);
   NSDebugLog(@"boundingBox = %@", [NSValue valueWithRect: [self boundingBox]]);
 }
 @end
@@ -249,17 +249,17 @@ getAngle(CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2)
       angle = atan(fabs(y2 - y1)/fabs(x2 - x1));
     if (y2 >= y1)
       {
-  if (x2 >= x1)
-    angle += 0;
-  else
-    angle = M_PI - angle;
+        if (x2 >= x1)
+          angle += 0;
+        else
+          angle = M_PI - angle;
       }
     else
       {
-  if (x2 >= x1)
-    angle = 2 * M_PI - angle;
-  else
-    angle += M_PI;
+        if (x2 >= x1)
+          angle = 2 * M_PI - angle;
+        else
+          angle += M_PI;
       }
     }
   return angle;
@@ -415,7 +415,7 @@ NSArray *PathToBoundary(GdsPath *path)
 - (void) debugLog
 {
   [super debugLog];
-  NSDebugLog(@"width = %f", [self width]);
+  NSDebugLog(@"   width = %f", [self width]);
   NSDebugLog(@"pathType = %d", [self pathType]);
 }
 @end
@@ -569,10 +569,10 @@ NSArray *PathToBoundary(GdsPath *path)
 {
   [super debugLog];
   NSDebugLog(@"referenceName = %@", [self referenceName]);
-  NSDebugLog(@"mag = %f", [self mag]);
-  NSDebugLog(@"angle = %f", [self angle]);
-  NSDebugLog(@"reflected = %@", [self reflected] ? @"YES" : @"NO");
-  NSDebugLog(@"origin = %@", NSStringFromPoint([self origin]));
+  NSDebugLog(@"          mag = %f", [self mag]);
+  NSDebugLog(@"        angle = %f", [self angle]);
+  NSDebugLog(@"    reflected = %@", [self reflected] ? @"YES" : @"NO");
+  NSDebugLog(@"       origin = %@", NSStringFromPoint([self origin]));
 }
 @end // GdsPrimitiveElement
 
@@ -737,9 +737,9 @@ NSArray *PathToBoundary(GdsPath *path)
 - (void) debugLog
 {
   [super debugLog]; 
-  NSDebugLog(@"rowCount = %d", [self rowCount]);
-  NSDebugLog(@"columnCount = %d", [self columnCount]);
-  NSDebugLog(@"rowSpacing = %f", [self rowSpacing]);
+  NSDebugLog(@"     rowCount = %d", [self rowCount]);
+  NSDebugLog(@"  columnCount = %d", [self columnCount]);
+  NSDebugLog(@"   rowSpacing = %f", [self rowSpacing]);
   NSDebugLog(@"columnSpacing = %f", [self columnSpacing]);
 }
 @end

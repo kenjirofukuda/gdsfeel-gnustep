@@ -15,6 +15,7 @@ NSString *GdsStructureDidChangeNotification =
 - (NSImage *) fullImage;
 - (void) forceRedraw;
 - (void) basicDrawElements: (NSArray *) elements;
+- (NSColor *) backgroundColor;
 @end
 
 @implementation GdsStructureView
@@ -69,14 +70,13 @@ NSString *GdsStructureDidChangeNotification =
 - (void) drawRect: (NSRect) rect
 {
   [super drawRect: rect];
-  [[NSColor blackColor] set];
+  [[self backgroundColor] set];
   NSRectFill(rect);
   if (_structure == nil)
     return;
   
-  //  [self drawElements: [_structure elements]];
   [[self fullImage] compositeToPoint: NSMakePoint(0,0) 
-                            operation: NSCompositeCopy];
+                           operation: NSCompositeCopy];
 }
 
 - (BOOL) acceptsFirstResponder
@@ -129,7 +129,6 @@ NSString *GdsStructureDidChangeNotification =
     {
       [[self colorForElement: element] set];
       [self drawElement: element];
-      // [element debugLog];
     }
 }
 
@@ -146,9 +145,16 @@ NSString *GdsStructureDidChangeNotification =
 
   _offImage = [[NSImage alloc] initWithSize: [self frame].size];
   [_offImage lockFocus];
+  [[self backgroundColor] set];
+  NSRectFill(NSMakeRect(0, 0, [_offImage size].width, [_offImage size].height));
   [self drawElements: [_structure elements]];
   [_offImage unlockFocus];
   return _offImage;
+}
+
+- (NSColor *) backgroundColor;
+{
+  return [NSColor blackColor];
 }
 
 - (NSColor *) colorForElement: (GdsElement *) element
@@ -189,6 +195,7 @@ NSString *GdsStructureDidChangeNotification =
 {
   static const CGFloat slipMargin = 20;
   NSEvent *evt = [NSApp currentEvent];
+  // NSDebugLog(@"evt = %@", evt);
   if ([evt type] == NSLeftMouseUp)
     return NO;
 

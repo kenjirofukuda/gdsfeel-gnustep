@@ -153,7 +153,6 @@
           [[_structureView viewport] pushTransform: tx];
           [_structureView drawElements: [refStructure elements]];
           (void) [[_structureView viewport] popTransform];     
-          [_structureView drawElements: [refStructure elements]];
         }
       (void) [[_structureView viewport] popTransform];     
     }
