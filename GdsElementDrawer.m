@@ -8,7 +8,7 @@
 - (void) strokeOutline;
 - (void) strokePoints: (NSArray *) points;
 - (void) strokePoints: (NSArray *) points
-	          transform: (NSAffineTransform *) transform;
+            transform: (NSAffineTransform *) transform;
 @end
 
 
@@ -62,7 +62,7 @@
 - (void) strokeOutline
 {
   [self strokePoints: [_element outlinePoints] 
-	         transform: [[self viewport] transform]];
+           transform: [[self viewport] transform]];
 }
 
 - (void) strokePoints: (NSArray *) points
@@ -71,7 +71,7 @@
 }
 
 - (void) strokePoints: (NSArray *) points 
-	          transform: (NSAffineTransform *) transform
+            transform: (NSAffineTransform *) transform
 {
   NSBezierPath *path = [NSBezierPath bezierPath];
   int i;
@@ -79,9 +79,9 @@
     {
       NSPoint p = [[points objectAtIndex: i] pointValue];
       if (i == 0)
-	      [path moveToPoint: p];
+        [path moveToPoint: p];
       else
-	      [path lineToPoint: p];
+        [path lineToPoint: p];
     }
   [path closePath];
   if (transform != nil)
@@ -149,13 +149,13 @@
       [[_structureView viewport] pushTransform: [element transform]];
       iter = [[element offsetTransforms] objectEnumerator]; 
       while ((tx = [iter nextObject]) != nil)
-	      {
-	        [[_structureView viewport] pushTransform: tx];
-	        [_structureView drawElements: [refStructure elements]];
-	        (void) [[_structureView viewport] popTransform];	   
-	        [_structureView drawElements: [refStructure elements]];
-	      }
-      (void) [[_structureView viewport] popTransform];	   
+        {
+          [[_structureView viewport] pushTransform: tx];
+          [_structureView drawElements: [refStructure elements]];
+          (void) [[_structureView viewport] popTransform];     
+          [_structureView drawElements: [refStructure elements]];
+        }
+      (void) [[_structureView viewport] popTransform];     
     }
 }
 @end
