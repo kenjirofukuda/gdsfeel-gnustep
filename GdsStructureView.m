@@ -54,7 +54,7 @@ NSString *GdsStructureDidChangeNotification =
   ASSIGN(_structure, structure);
   [[NSNotificationCenter defaultCenter] 
     postNotificationName: GdsStructureDidChangeNotification
-    object: self];
+                  object: self];
   ASSIGN(_viewport, [[GdsViewport alloc] initWithStructure: _structure]);
   [self viewFrameChanged: (NSNotification *) nil];
   [[self viewport] fit];
@@ -76,7 +76,7 @@ NSString *GdsStructureDidChangeNotification =
   
   //  [self drawElements: [_structure elements]];
   [[self fullImage] compositeToPoint: NSMakePoint(0,0) 
-          operation: NSCompositeCopy];
+                            operation: NSCompositeCopy];
 }
 
 - (BOOL) acceptsFirstResponder
@@ -129,7 +129,7 @@ NSString *GdsStructureDidChangeNotification =
     {
       [[self colorForElement: element] set];
       [self drawElement: element];
-      //      [element debugLog];
+      // [element debugLog];
     }
 }
 
