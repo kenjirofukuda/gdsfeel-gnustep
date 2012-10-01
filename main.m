@@ -8,7 +8,7 @@
  *
  * Here is our random useless dummy reference.
  */
-#ifdef __MINGW32__
+#ifdef __MINGW__
 int (*linkRenaissanceIn)(int, const char **) = GSMarkupApplicationMain;
 #endif
 

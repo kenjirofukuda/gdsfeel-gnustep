@@ -60,11 +60,11 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
 - (void) debugLog
 {
-  NSDebugLog(@"folder = %@", _folderPath);
-  NSDebugLog(@"keyName = %@", [self keyName]);
-  NSDebugLog(@"localName = %@", [self localName]);
+  NSDebugLog(@"       folder = %@", _folderPath);
+  NSDebugLog(@"      keyName = %@", [self keyName]);
+  NSDebugLog(@"    localName = %@", [self localName]);
   NSDebugLog(@"pathToExtract = %@", [self pathToExtract]);
-  NSDebugLog(@"isOpen = %@", [self isOpen] ? @"YES" : @"NO");
+  NSDebugLog(@"       isOpen = %@", [self isOpen] ? @"YES" : @"NO");
 }
 
 - (NSString *) pathToExtract
@@ -87,18 +87,25 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
       NSWarnLog(@"Already Opend!");
       return;
     }
-
+#ifdef __MINGW__
+  BOOL ok = [[NSFileManager defaultManager]
+              createDirectoryAtPath: [self pathToExtract] attributes: nil];
+#else
   NSMutableDictionary *attr;
   attr = [[NSMutableDictionary alloc] init]; 
   [attr setValue:[NSNumber numberWithShort:0755] forKey:NSFilePosixPermissions];
 
-  NSError *theError;
+  NSError *theError = nil;
   BOOL ok = [[NSFileManager defaultManager]
                     createDirectoryAtPath: [self pathToExtract]
               withIntermediateDirectories: YES 
                                attributes: attr 
                                     error: &theError];
- 
+  if (theError)
+    {
+      NSDebugLog (@"%@", [theError localizedDescription]);
+    }
+#endif 
   BOOL exists;
   exists = [self isDirectory: [self pathToExtract]];
   if (exists == NO) 
