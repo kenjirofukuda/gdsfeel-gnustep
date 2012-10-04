@@ -1,36 +1,37 @@
-gdsfeel-gnustep
-===============
+# gdsfeel-gnustep
 
 git repositry name. original project name is GdsFeelGS.
 
 <http://gdsfeel.com/hikifarm/GNUstep/>
 
-GdsFeelGS
-=========
+## GdsFeelGS
 GdsFeelGS is a variation of GdsFeel project http://gdsfeel.com/note/.
 
 GdsFeel[G]NU[s]tep
 
-TARGET OS
-=========
+## TARGET OS
 * Linux
 * Windows 
 * ==Mac OS X ==(Currentry disabled) see FAQ
 
-REQUIRE
-=======
+## REQUIRE
 * gnustep
 * Renaissance
 
-BUILD
-=====
+
+## SAMPLE GDSII DATABASE FILE
+
+<http://gdsfeel.com/downloads/BGHIER.DB>
+
+
+## BUILD
 execute in terminal. 
 
     ./Run.sh
 
+    [Document][open] choose BGHIRE.DB
 
-FAQ
-===
+## FAQ
  Q: Why Mac OS X is a disable target.
 
  A: 

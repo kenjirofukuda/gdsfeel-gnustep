@@ -13,22 +13,12 @@ static GdsZipArchiver *sDefaultArchiver = nil;
 @implementation GdsZipArchiver
 - (NSString*) pathToZipCommand
 {
-// TODO: remove path
-#ifdef __MINGW32__
-  return @"C:/Program Files/GnuWin32/bin/zip.exe";
-#else
-  return @"/usr/bin/zip";
-#endif
+  return [NSTask launchPathForTool: @"zip"];
 }
 
 - (NSString*) pathToUnzipCommand
 {
-// TODO: remove path
-#ifdef __MINGW32__
-  return @"C:/Program Files/GnuWin32/bin/unzip.exe";
-#else
-  return @"/usr/bin/unzip";
-#endif
+  return [NSTask launchPathForTool: @"unzip"];
 }
 
 - (BOOL) isZipArchiverEnabled

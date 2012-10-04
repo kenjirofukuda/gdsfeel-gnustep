@@ -1,8 +1,27 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
+UNZIP_PATH := $(strip $(shell which unzip 2>/dev/null))
+ifeq ($(UNZIP_PATH),)
+require_unzip:
+	@echo 
+	@echo "*** ERROR *** unzip not found. GdsFeel require unzip command."
+	@echo "  mingw-get install msys-unzip. if MSYS/MinGW environment. "
+	@echo 
+	exit 1
+endif
+
+ZIP_PATH := $(strip $(shell which zip 2>/dev/null))
+ifeq ($(ZIP_PATH),)
+require_zip:
+	@echo 
+	@echo "*** ERROR *** zip not found. GdsFeel require zip command."
+	@echo "  mingw-get install msys-zip. if MSYS/MinGW environment. "
+	@echo 
+	exit 1
+endif
+
 SUBPROJECTS = \
   GdsFeelCore 
-
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 
