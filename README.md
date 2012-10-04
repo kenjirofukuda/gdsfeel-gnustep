@@ -16,7 +16,7 @@ GdsFeel[G]NU[s]tep
 
 ## REQUIRE
 * gnustep
-* Renaissance
+* Renaissance => @see INSTALL.md
 
 
 ## SAMPLE GDSII DATABASE FILE
