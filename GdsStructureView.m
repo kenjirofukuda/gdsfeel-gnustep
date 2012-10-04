@@ -188,6 +188,7 @@ NSString *GdsStructureDidChangeNotification =
 }
 
 #ifdef GNUSTEP
+#ifdef __MINGW32__
 /**
  * GNUstep live resizeing not supported
  */
@@ -209,6 +210,7 @@ NSString *GdsStructureDidChangeNotification =
   checkRect.origin.y += slipMargin;
   return ! NSPointInRect(viewLoc, checkRect);
 }
+#endif
 #endif
 
 @end
