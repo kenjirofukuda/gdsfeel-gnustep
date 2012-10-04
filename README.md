@@ -2,7 +2,7 @@
 
 git repositry name. original project name is GdsFeelGS.
 
-<http://gdsfeel.com/hikifarm/GNUstep/>
+<http://gdsfeel.com/hikifarm/GNUstep/?GdsFeelGS>
 
 ## GdsFeelGS
 GdsFeelGS is a variation of GdsFeel project http://gdsfeel.com/note/.
