@@ -84,9 +84,8 @@
 
 - (void) setBounds: (NSRect) worldBounds
 {
-  NSRect modelBounds = [_structure boundingBox];
-  double hRatio = _portSize.width / NSWidth(modelBounds);
-  double vRatio = _portSize.height / NSHeight(modelBounds);
+  double hRatio = _portSize.width / NSWidth(worldBounds);
+  double vRatio = _portSize.height / NSHeight(worldBounds);
   double ratio = hRatio < vRatio ? hRatio : vRatio;
   NSPoint newCenter = NSMakePoint(NSMidX(worldBounds), NSMidY(worldBounds));
   _center = newCenter;
@@ -104,6 +103,7 @@
   [inverseTransform invert];
   viewBounds.origin = [inverseTransform transformPoint: pixelBounds.origin];
   viewBounds.size = [inverseTransform transformSize: pixelBounds.size];
+  RELEASE(inverseTransform);
   return viewBounds;
 }
 

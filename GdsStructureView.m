@@ -8,6 +8,9 @@
 NSString *GdsStructureDidChangeNotification = 
   @"GdsStructureDidChangeNotification";
 
+NSRect RectFromPoints(NSPoint point1, NSPoint point2);
+CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
+
 @interface GdsStructureView (Private)
 - (NSColor *) colorForElement: (GdsElement *) element;
 - (void) drawElement: (GdsElement*) element;
@@ -16,6 +19,13 @@ NSString *GdsStructureDidChangeNotification =
 - (void) forceRedraw;
 - (void) basicDrawElements: (NSArray *) elements;
 - (NSColor *) backgroundColor;
+- (NSPoint) localPoint: (NSEvent *) theEvent;
+- (void) keyDown: (NSEvent *) theEvent;
+- (void) mouseDown: (NSEvent *) theEvent;
+- (void) rubberbandWithEvent: (NSEvent *) theEvent;
+- (void) rubberbandWithEvent: (NSEvent *) theEvent
+                      point1: (NSPoint *) point1
+                      point2: (NSPoint *) point2;
 @end
 
 @implementation GdsStructureView
@@ -24,6 +34,7 @@ NSString *GdsStructureDidChangeNotification =
   self = [super initWithFrame: frame];
   if (self != nil)
     {
+      _rubberbandRect = NSZeroRect;
       [self setPostsFrameChangedNotifications: YES];
       [[NSNotificationCenter defaultCenter] 
         addObserver: self
@@ -77,6 +88,12 @@ NSString *GdsStructureDidChangeNotification =
   
   [[self fullImage] compositeToPoint: NSMakePoint(0,0) 
                            operation: NSCompositeCopy];
+
+ if (! NSEqualRects(_rubberbandRect, NSZeroRect))
+   {
+     [[NSColor knobColor] set];
+     NSFrameRect(_rubberbandRect);
+   }
 }
 
 - (BOOL) acceptsFirstResponder
@@ -213,6 +230,141 @@ NSString *GdsStructureDidChangeNotification =
 #endif
 #endif
 
+- (NSPoint) localPoint: (NSEvent *) theEvent
+{
+  return [self convertPoint:[theEvent locationInWindow] fromView:nil];
+}
+
+- (void) mouseDown: (NSEvent *) theEvent
+{
+  [self rubberbandWithEvent: theEvent];
+}
+
+- (void) rubberbandWithEvent: (NSEvent *) theEvent
+{
+  NSPoint vLoc1;
+  NSPoint vLoc2;
+  NSAffineTransform *itx;
+  NSRect wBounds;
+  NSRect vBounds;
+
+  [self rubberbandWithEvent:theEvent point1:&vLoc1 point2:&vLoc2];
+  vBounds = RectFromPoints(vLoc1, vLoc2);
+  itx = [[NSAffineTransform alloc] initWithTransform: [_viewport transform]];
+  [itx invert];
+  wBounds.origin = [itx transformPoint: vBounds.origin];
+  wBounds.size = [itx transformSize: vBounds.size];
+  RELEASE(itx);
+  if (4.0 < DistanceFromPoints(vLoc1, vLoc2))
+    {
+      //NSLog(@"wBounds = %@", NSStringFromRect(wBounds));
+      [_viewport setBounds: wBounds];
+    }
+  else 
+    {
+      [_viewport setCenter: wBounds.origin];
+    }
+  [self forceRedraw];
+}
+
+- (void) rubberbandWithEvent: (NSEvent *) theEvent
+                      point1: (NSPoint *) point1
+                      point2: (NSPoint *) point2
+{
+  *point1 = [self localPoint: theEvent];
+  while (1)
+    {
+      theEvent = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+      *point2 = [self localPoint: theEvent];
+      //NSLog(@"curPoint = %@", NSStringFromPoint(*point2));
+
+      if (NSEqualPoints(*point1, *point2))
+        {
+          if (! NSEqualRects(_rubberbandRect, NSZeroRect))
+            {
+              [self setNeedsDisplayInRect:_rubberbandRect];
+            }
+          _rubberbandRect = NSZeroRect;
+        }
+      else
+        {
+          [self setNeedsDisplayInRect:_rubberbandRect];
+          NSRect newRect = RectFromPoints(*point1, *point2);   
+          _rubberbandRect = newRect;
+          [self setNeedsDisplayInRect:_rubberbandRect];
+        }
+      if ([theEvent type] == NSLeftMouseUp) 
+        {
+          break;
+        }
+    }
+   if (! NSEqualRects(_rubberbandRect, NSZeroRect))
+     {
+       [self setNeedsDisplayInRect:_rubberbandRect];
+     }
+   _rubberbandRect = NSZeroRect;
+}
+  
+- (void) keyDown: (NSEvent *) theEvent
+{
+  BOOL handled = NO;
+  NSString  *characters;
+  unichar keyChar = 0;
+        
+  characters = [theEvent charactersIgnoringModifiers];
+  if ([characters length] == 1)
+    {
+      keyChar = [characters characterAtIndex: 0];
+      if (keyChar == NSHomeFunctionKey)
+        {
+          [self fit: nil];
+          handled = YES;
+        }
+    }
+  if (! handled &&  [characters isEqual: @"+"])
+    {
+      [self zoomDouble: nil];
+      handled = YES;
+    }
+  if (! handled && [characters isEqual: @"-"])
+    {
+      [self zoomHalf: nil];
+      handled = YES;
+    }
+  if (! handled)
+    {
+      [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+      handled = YES;
+   }
+  if (! handled)
+   {
+     [super keyDown:theEvent];
+      handled = YES;
+   }
+}
+
+- (IBAction) moveUp: (id) sender
+{
+  [self viewMoveUp: sender];
+}
+
+- (IBAction) moveDown: (id) sender
+{
+  [self viewMoveDown: sender];
+}
+
+
+- (IBAction) moveRight: (id) sender
+{
+  [self viewMoveRight: sender];
+}
+
+
+- (IBAction) moveLeft: (id) sender
+{
+  [self viewMoveLeft: sender];
+}
+
 @end
 
 @implementation GdsStructureView (Actions)
@@ -263,5 +415,21 @@ NSString *GdsStructureDidChangeNotification =
 }
 
 @end
+
+CGFloat DistanceFromPoints(NSPoint a, NSPoint b)
+{
+  CGFloat dX = a.x - b.x;
+  CGFloat dY = a.y - b.y;
+  return sqrt(dX*dX + dY*dY);
+}
+
+NSRect RectFromPoints(NSPoint point1, NSPoint point2)
+{
+  return NSMakeRect(((point1.x <= point2.x) ? point1.x : point2.x),
+                    ((point1.y <= point2.y) ? point1.y : point2.y),
+                    ((point1.x <= point2.x) ? point2.x - point1.x : point1.x - point2.x),
+                    ((point1.y <= point2.y) ? point2.y - point1.y : point1.y - point2.y));
+}
+
 
 // vim: sw=2 ts=2 expandtab filetype=objc

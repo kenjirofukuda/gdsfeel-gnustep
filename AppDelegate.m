@@ -11,12 +11,12 @@
 
 - (void) awakeFromGSMarkup
 {
-  NSLog(@"#awakeFromGSMarkup");
+  NSDebugLog(@"#awakeFromGSMarkup");
 }
 
 - (void) bundleDidLoadGSMarkup: (NSNotification *)aNotification
 {
-  NSLog(@"#bundleDidLoadGSMarkup:");
+  NSDebugLog(@"#bundleDidLoadGSMarkup:");
 }
 
 @end

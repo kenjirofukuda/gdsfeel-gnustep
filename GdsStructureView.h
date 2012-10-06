@@ -10,6 +10,7 @@ extern NSString *GdsStructureDidChangeNotification;
   GdsStructure *_structure;
   GdsViewport *_viewport;
   NSImage *_offImage;
+  NSRect _rubberbandRect;
 }
 - (id) initWithFrame: (NSRect) frame;
 - (void) dealloc;
