@@ -31,6 +31,18 @@ execute in terminal.
 
     [Document][open] choose BGHIRE.DB
 
+## View Navigation
+
+Key       | Navigation
+----------|-----------------
+NumPad +  |zoom 2.0
+NumPad -  |zoom 0.5
+Home      |zoom to fit
+LeftArrow |scroll view left
+RightArrow|scroll view right
+UpArrow   |scroll view up
+DownArrow |scroll view down
+
 ## FAQ
  Q: Why Mac OS X is a disable target.
 
