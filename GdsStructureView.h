@@ -24,8 +24,6 @@ extern NSString *GdsStructureDidChangeNotification;
 - (void) setInfoBar: (id) infoBar;
 
 - (void) drawRect: (NSRect) rect;
-- (BOOL) acceptsFirstResponder;
-- (BOOL) acceptsFirstMouse: (NSEvent *) event;
 - (void) drawElements: (NSArray *) elements;
 @end
 

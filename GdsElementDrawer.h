@@ -11,6 +11,8 @@
 - (id) initWithElement: (GdsElement *) element view: (GdsStructureView *) view;
 - (void) dealloc;
 - (void) draw;
+- (void) fullDraw;
+- (NSColor *) frameColor;
 
 + (Class) drawerClassForElement: (GdsElement *) element;
 @end

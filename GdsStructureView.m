@@ -11,23 +11,34 @@ NSString *GdsStructureDidChangeNotification =
 NSRect RectFromPoints(NSPoint point1, NSPoint point2);
 CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 
-@interface GdsStructureView (Private)
-- (NSColor *) colorForElement: (GdsElement *) element;
+@interface GdsStructureView (Override)
+- (BOOL) acceptsFirstResponder;
+- (BOOL) acceptsFirstMouse: (NSEvent *) event;
+- (BOOL) preservesContentDuringLiveResize;
+- (void) viewDidEndLiveResize;
+- (void) viewDidMoveToWindow;
+@end
+
+@interface GdsStructureView (Drawing)
 - (void) drawElement: (GdsElement*) element;
-- (void) viewFrameChanged: (NSNotification *) aNotification;
-- (NSImage *) fullImage;
-- (void) forceRedraw;
 - (void) basicDrawElements: (NSArray *) elements;
+- (void) forceRedraw;
 - (NSColor *) backgroundColor;
+- (NSImage *) fullImage;
+@end
+
+@interface GdsStructureView (Private)
+- (void) viewFrameChanged: (NSNotification *) aNotification;
 - (NSPoint) localPoint: (NSEvent *) theEvent;
 - (void) rubberbandWithEvent: (NSEvent *) theEvent;
 - (void) rubberbandWithEvent: (NSEvent *) theEvent
                       point1: (NSPoint *) point1
                       point2: (NSPoint *) point2;
 - (void) removeTrack;
+- (void) updateCursorLocation: (NSEvent *) theEvent;
 @end
 
-@implementation GdsStructureView
+@implementation GdsStructureView // (Public)
 - (id) initWithFrame: (NSRect) frame
 {
   self = [super initWithFrame: frame];
@@ -103,6 +114,24 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
    }
 }
 
+- (void) drawElements: (NSArray *) elements
+{
+  NSMutableArray *primitives;
+  NSMutableArray *references;
+
+  primitives = [NSMutableArray new];
+  references = [NSMutableArray new];
+  [elements getPrimitivesOn: primitives referencesOn: references];
+  [self basicDrawElements: primitives];
+  [self basicDrawElements: references];
+  RELEASE(primitives);
+  RELEASE(references);
+}
+
+@end  // (Public)
+
+
+@implementation GdsStructureView (Override)
 - (BOOL) acceptsFirstResponder
 {
   return YES;
@@ -118,30 +147,23 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   return NO;
 }
 
-- (void) drawElements: (NSArray *) elements
-{
-  NSMutableArray *primitives;
-  NSMutableArray *references;
-
-  primitives = [NSMutableArray new];
-  references = [NSMutableArray new];
-  [elements getPrimitivesOn: primitives referencesOn: references];
-  [self basicDrawElements: primitives];
-  [self basicDrawElements: references];
-  RELEASE(primitives);
-  RELEASE(references);
-}
-
-
 - (void) viewDidEndLiveResize
 {
   [self forceRedraw];
   [super viewDidEndLiveResize];
 }
 
-@end
+- (void) viewDidMoveToWindow
+{
+  [super viewDidMoveToWindow];
+  [self removeTrack];
+  _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];
+}
 
-@implementation GdsStructureView (Private)
+@end // (Override)
+
+
+@implementation GdsStructureView (Drawing)
 - (void) basicDrawElements: (NSArray *) elements
 {
   GdsElement *element;
@@ -151,7 +173,6 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   [[NSColor whiteColor] set];  
   while ((element = [iter nextObject]) != nil)
     {
-      [[self colorForElement: element] set];
       [self drawElement: element];
     }
 }
@@ -171,7 +192,15 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   [_offImage lockFocus];
   [[self backgroundColor] set];
   NSRectFill(NSMakeRect(0, 0, [_offImage size].width, [_offImage size].height));
+  
+  NSDate *startTime = [NSDate date];
+
   [self drawElements: [_structure elements]];
+
+  NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow]; 
+  NSString* str = [NSString stringWithFormat: @"Elapsed time: %f",
+                                              fabs(elapsedTime)];
+  NSLog(str);
   [_offImage unlockFocus];
   return _offImage;
 }
@@ -179,15 +208,6 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 - (NSColor *) backgroundColor;
 {
   return [NSColor blackColor];
-}
-
-- (NSColor *) colorForElement: (GdsElement *) element
-{
-  if ([element isReference])
-    return [NSColor lightGrayColor];
-  GdsPrimitiveElement *primitive = (GdsPrimitiveElement *) element;
-  return [[[[[primitive structure] library] layers] 
-      layerAtNumber: [primitive layerNumber]] color];
 }
 
 - (void) drawElement: (GdsElement*) element
@@ -200,56 +220,14 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
       return;
     }
   drawer = AUTORELEASE([[drawerClass alloc] initWithElement: element view: self]);
-  [drawer draw];
+  [drawer fullDraw];
 }
+@end  // (Drawing)
 
-- (void) viewFrameChanged: (NSNotification *) aNotification
-{
-  NSDebugLog(@"#viewFrameChanged:");
-  [_viewport setPortSize: [self frame].size];
-  [self removeTrack];
-  _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];
-  [self forceRedraw];
-}
-
-#if 0
-/**
- * GNUstep live resizeing not supported
- */
-- (BOOL) inLiveResize
-{
-  static const CGFloat slipMargin = 20;
-  NSEvent *evt = [NSApp currentEvent];
-
-  NSPoint globalLoc = [NSEvent mouseLocation];
-  NSPoint windowLoc = [[self window] convertScreenToBase:globalLoc];
-  NSPoint viewLoc = [self convertPoint: windowLoc fromView: nil];
-  NSRect checkRect = NSInsetRect([self frame], slipMargin, slipMargin);
-
-  NSDebugLog(@"checkRect = %@, viewLoc = %@",
-             NSStringFromRect(checkRect),
-             NSStringFromPoint(viewLoc));
-  if ([evt type] == NSLeftMouseUp)
-    return NO;
-  return ! NSPointInRect(viewLoc, checkRect);
-}
-#endif
-
-- (NSPoint) localPoint: (NSEvent *) theEvent
-{
-  return [self convertPoint:[theEvent locationInWindow] fromView:nil];
-}
-
+@implementation GdsStructureView (Events)
 - (void) mouseDown: (NSEvent *) theEvent
 {
   [self rubberbandWithEvent: theEvent];
-}
-
-- (void) viewDidMoveToWindow
-{
-  [super viewDidMoveToWindow];
-  [self removeTrack];
-  _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];
 }
 
 - (void) mouseEntered: (NSEvent *) theEvent
@@ -268,6 +246,80 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 - (void) mouseMoved: (NSEvent *) theEvent
 {
   [self updateCursorLocation: theEvent];
+}
+
+- (void) keyDown: (NSEvent *) theEvent
+{
+  BOOL handled = NO;
+  NSString  *characters;
+  unichar keyChar = 0;
+        
+  characters = [theEvent charactersIgnoringModifiers];
+  if ([characters length] == 1)
+    {
+      keyChar = [characters characterAtIndex: 0];
+      if (keyChar == NSHomeFunctionKey)
+        {
+          [self fit: nil];
+          handled = YES;
+        }
+    }
+  if (! handled &&  [characters isEqual: @"+"])
+    {
+      [self zoomDouble: nil];
+      handled = YES;
+    }
+  if (! handled && [characters isEqual: @"-"])
+    {
+      [self zoomHalf: nil];
+      handled = YES;
+    }
+  if (! handled)
+    {
+      [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+      handled = YES;
+   }
+  if (! handled)
+   {
+     [super keyDown:theEvent];
+      handled = YES;
+   }
+}
+
+- (IBAction) moveUp: (id) sender
+{
+  [self viewMoveUp: sender];
+}
+
+- (IBAction) moveDown: (id) sender
+{
+  [self viewMoveDown: sender];
+}
+
+- (IBAction) moveRight: (id) sender
+{
+  [self viewMoveRight: sender];
+}
+
+- (IBAction) moveLeft: (id) sender
+{
+  [self viewMoveLeft: sender];
+}
+@end  // (Events)
+
+@implementation GdsStructureView (Private)
+- (void) viewFrameChanged: (NSNotification *) aNotification
+{
+  NSDebugLog(@"#viewFrameChanged:");
+  [_viewport setPortSize: [self frame].size];
+  [self removeTrack];
+  _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];
+  [self forceRedraw];
+}
+
+- (NSPoint) localPoint: (NSEvent *) theEvent
+{
+  return [self convertPoint:[theEvent locationInWindow] fromView:nil];
 }
 
 - (void) updateCursorLocation: (NSEvent *) theEvent
@@ -307,7 +359,7 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   wBounds.origin = [itx transformPoint: vBounds.origin];
   wBounds.size = [itx transformSize: vBounds.size];
   RELEASE(itx);
-  if (4.0 < DistanceFromPoints(vLoc1, vLoc2))
+  if (vBounds.size.width > 2.0 && vBounds.size.height > 2.0)
     {
       //NSLog(@"wBounds = %@", NSStringFromRect(wBounds));
       [_viewport setBounds: wBounds];
@@ -366,66 +418,6 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 }
 
   
-- (void) keyDown: (NSEvent *) theEvent
-{
-  BOOL handled = NO;
-  NSString  *characters;
-  unichar keyChar = 0;
-        
-  characters = [theEvent charactersIgnoringModifiers];
-  if ([characters length] == 1)
-    {
-      keyChar = [characters characterAtIndex: 0];
-      if (keyChar == NSHomeFunctionKey)
-        {
-          [self fit: nil];
-          handled = YES;
-        }
-    }
-  if (! handled &&  [characters isEqual: @"+"])
-    {
-      [self zoomDouble: nil];
-      handled = YES;
-    }
-  if (! handled && [characters isEqual: @"-"])
-    {
-      [self zoomHalf: nil];
-      handled = YES;
-    }
-  if (! handled)
-    {
-      [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-      handled = YES;
-   }
-  if (! handled)
-   {
-     [super keyDown:theEvent];
-      handled = YES;
-   }
-}
-
-- (IBAction) moveUp: (id) sender
-{
-  [self viewMoveUp: sender];
-}
-
-- (IBAction) moveDown: (id) sender
-{
-  [self viewMoveDown: sender];
-}
-
-
-- (IBAction) moveRight: (id) sender
-{
-  [self viewMoveRight: sender];
-}
-
-
-- (IBAction) moveLeft: (id) sender
-{
-  [self viewMoveLeft: sender];
-}
-
 @end
 
 @implementation GdsStructureView (Actions)

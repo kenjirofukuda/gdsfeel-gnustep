@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "GdsElementDrawer.h"
 #import "GdsFeelCore/GdsElement.h"
+#import "GdsFeelCore/GdsLayer.h"
 #import "GdsStructureView.h"
 
 @interface GdsElementDrawer (Private)
@@ -31,9 +32,22 @@
   [super dealloc];
 }
 
+- (void) fullDraw
+{
+  [[self frameColor] set];
+  [self draw];
+}
+
 - (void) draw
 {
   [self strokeOutline];
+}
+
+- (NSColor *) frameColor
+{
+  GdsPrimitiveElement *primitive = (GdsPrimitiveElement *) _element;
+  return [[[[[primitive structure] library] layers] 
+      layerAtNumber: [primitive layerNumber]] color];
 }
 
 + (Class) drawerClassForElement: (GdsElement *) element
@@ -121,6 +135,12 @@
       (void) [[_structureView viewport] popTransform];
     }
 }
+
+- (NSColor *) frameColor
+{
+  return [NSColor lightGrayColor];
+}
+
 @end
 
 @implementation GdsSrefDrawer

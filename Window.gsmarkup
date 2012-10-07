@@ -16,7 +16,7 @@
                    width="512" height="342" >
         </view>
       </hbox>
-      <label id="infoBar" valign="bottom" halign="expand" width="612" height="20" >this is label</label>
+      <label id="infoBar" valign="bottom" halign="expand" width="612" height="20" >NO STRUCTURE OPEN</label>
     </vbox>
   </window>
 </objects>

@@ -727,9 +727,9 @@ NSArray *PathToBoundary(GdsPath *path)
 - (NSArray *) lookupOutlinePoints
 {
   NSRect bounds = [[self referenceStructure] boundingBox];
-  CGFloat newWidth, newHeight;
-  newWidth = [self columnCount] * [self columnSpacing] + bounds.size.width;
-  newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height; 
+  //CGFloat newWidth, newHeight;
+  //newWidth = [self columnCount] * [self columnSpacing] + bounds.size.width;
+  //newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height; 
   return  [[NSArray pointsFromNSRect: bounds]
       transformedPoints: [self transform]];  
 }
