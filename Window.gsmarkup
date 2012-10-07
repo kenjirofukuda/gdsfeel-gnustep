@@ -4,17 +4,20 @@
 
 <objects>
   <window id="libraryWindow" title="GDSII" center="yes" miniaturizable="no" resizable="yes">
-    <hbox>
-      <scrollView width="150" halign="bottom" valign="expand">
-	<tableView id="structureListView">
-	  <tableColumn identifier="Name" minWidth="100" editable="NO" title="Structure Name"/>
-	</tableView>
-      </scrollView>
-      <view instanceOf="GdsStructureView" 
-	    id="structureView" valign="expand" halign="expand"
-	    width="512" height="342" >
-      </view>
-    </hbox>
+    <vbox>
+      <hbox>
+        <scrollView width="150" halign="bottom" valign="expand">
+          <tableView id="structureListView">
+            <tableColumn identifier="Name" minWidth="100" editable="NO" title="Structure Name"/>
+          </tableView>
+        </scrollView>
+        <view instanceOf="GdsStructureView" id="structureView"
+                  valign="expand" halign="expand"
+                   width="512" height="342" >
+        </view>
+      </hbox>
+      <label id="infoBar" valign="bottom" halign="expand" width="612" height="20" >this is label</label>
+    </vbox>
   </window>
 </objects>
 
@@ -22,6 +25,7 @@
   <outlet source="#NSOwner" target="#libraryWindow" key="window" />
   <outlet source="#NSOwner" target="#structureListView" key="structureListView" />
   <outlet source="#NSOwner" target="#structureView" key="structureView" />
+  <outlet source="#NSOwner" target="#infoBar" key="infoBarView" />
 </connectors>
 
 </gsmarkup>

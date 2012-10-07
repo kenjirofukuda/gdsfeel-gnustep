@@ -12,6 +12,7 @@
 
   IBOutlet GdsStructureView *structureView;
   IBOutlet id structureListView;
+  IBOutlet id infoBarView;
 }
 
 - (void) dealloc;

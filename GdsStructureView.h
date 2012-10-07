@@ -11,6 +11,8 @@ extern NSString *GdsStructureDidChangeNotification;
   GdsViewport *_viewport;
   NSImage *_offImage;
   NSRect _rubberbandRect;
+  NSTextField *_infoBar;
+  NSTrackingRectTag _trackId;
 }
 - (id) initWithFrame: (NSRect) frame;
 - (void) dealloc;
@@ -18,6 +20,8 @@ extern NSString *GdsStructureDidChangeNotification;
 - (GdsStructure *) structure;
 - (void) setStructure: (GdsStructure *) structure;
 - (GdsViewport *) viewport;
+
+- (void) setInfoBar: (id) infoBar;
 
 - (void) drawRect: (NSRect) rect;
 - (BOOL) acceptsFirstResponder;

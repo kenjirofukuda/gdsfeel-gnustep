@@ -49,12 +49,12 @@
   NSDebugLog(@"#windowControllerDidLoadNib:");
   NSDebugLog(@"windowController = %@", windowController);
   NSDebugLog(@"window = %@", [windowController window]);
-  [[windowController window] 
-    setTitle: [NSString 
-      stringWithFormat: @"GDSII: %@", [_library keyName]]];
+  [[windowController window] setTitle: [NSString 
+                     stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
   [structureListView setDataSource: self];
   [structureListView setDelegate: self];
+  [structureView setInfoBar: infoBarView];
   NSDebugLog(@"#windowControllerDidLoadNib: ca");
 }
 @end
@@ -101,6 +101,7 @@ objectValueForTableColumn: (NSTableColumn*)aTableColumn
 @implementation GdsLibraryDocument (Private)
 - (void) logOutlet
 {
+  NSDebugLog(@"infoBarView = %@", infoBarView);
   NSDebugLog(@"structureView = %@", structureView);
   NSDebugLog(@"structureListView = %@", structureListView);
 }

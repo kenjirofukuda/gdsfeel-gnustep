@@ -20,12 +20,11 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 - (void) basicDrawElements: (NSArray *) elements;
 - (NSColor *) backgroundColor;
 - (NSPoint) localPoint: (NSEvent *) theEvent;
-- (void) keyDown: (NSEvent *) theEvent;
-- (void) mouseDown: (NSEvent *) theEvent;
 - (void) rubberbandWithEvent: (NSEvent *) theEvent;
 - (void) rubberbandWithEvent: (NSEvent *) theEvent
                       point1: (NSPoint *) point1
                       point2: (NSPoint *) point2;
+- (void) removeTrack;
 @end
 
 @implementation GdsStructureView
@@ -36,6 +35,7 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
     {
       _rubberbandRect = NSZeroRect;
       [self setPostsFrameChangedNotifications: YES];
+      [[self window] setAcceptsMouseMovedEvents: YES];
       [[NSNotificationCenter defaultCenter] 
         addObserver: self
            selector: @selector(viewFrameChanged:)
@@ -48,9 +48,16 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 - (void)  dealloc
 {
  [[NSNotificationCenter defaultCenter] removeObserver: self];
+ [self removeTrack];
  RELEASE(_viewport);
  TEST_RELEASE(_structure);
+ RELEASE(_infoBar);
   [super dealloc];
+}
+
+- (void) setInfoBar: (id) infoBar
+{
+  ASSIGN(_infoBar, infoBar); 
 }
 
 - (GdsStructure *) structure
@@ -108,7 +115,7 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 
 - (BOOL) preservesContentDuringLiveResize
 {
-  return YES;
+  return NO;
 }
 
 - (void) drawElements: (NSArray *) elements
@@ -200,12 +207,12 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 {
   NSDebugLog(@"#viewFrameChanged:");
   [_viewport setPortSize: [self frame].size];
-  //if (! [self inLiveResize])
+  [self removeTrack];
+  _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];
   [self forceRedraw];
 }
 
-#ifdef GNUSTEP
-#ifdef __MINGW32__
+#if 0
 /**
  * GNUstep live resizeing not supported
  */
@@ -213,21 +220,19 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 {
   static const CGFloat slipMargin = 20;
   NSEvent *evt = [NSApp currentEvent];
-  // NSDebugLog(@"evt = %@", evt);
-  if ([evt type] == NSLeftMouseUp)
-    return NO;
 
   NSPoint globalLoc = [NSEvent mouseLocation];
   NSPoint windowLoc = [[self window] convertScreenToBase:globalLoc];
   NSPoint viewLoc = [self convertPoint: windowLoc fromView: nil];
-  NSRect checkRect = [self frame];
+  NSRect checkRect = NSInsetRect([self frame], slipMargin, slipMargin);
 
-  checkRect.size.width -= slipMargin;
-  checkRect.size.height -= slipMargin;
-  checkRect.origin.y += slipMargin;
+  NSDebugLog(@"checkRect = %@, viewLoc = %@",
+             NSStringFromRect(checkRect),
+             NSStringFromPoint(viewLoc));
+  if ([evt type] == NSLeftMouseUp)
+    return NO;
   return ! NSPointInRect(viewLoc, checkRect);
 }
-#endif
 #endif
 
 - (NSPoint) localPoint: (NSEvent *) theEvent
@@ -240,6 +245,51 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   [self rubberbandWithEvent: theEvent];
 }
 
+- (void) viewDidMoveToWindow
+{
+  [super viewDidMoveToWindow];
+  [self removeTrack];
+  _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];
+}
+
+- (void) mouseEntered: (NSEvent *) theEvent
+{
+  NSLog(@"%@", @"#mouseEntered:");
+  [[self window] makeFirstResponder: self]; 
+  [[self window] setAcceptsMouseMovedEvents: YES];
+}
+
+- (void) mouseExited: (NSEvent *) theEvent
+{
+  NSLog(@"%@", @"#mouseExited:");
+  [[self window] setAcceptsMouseMovedEvents: NO];
+}
+
+- (void) mouseMoved: (NSEvent *) theEvent
+{
+  [self updateCursorLocation: theEvent];
+}
+
+- (void) updateCursorLocation: (NSEvent *) theEvent
+{
+  NSPoint vLoc = [self localPoint: theEvent];
+  NSMutableString *s = [NSMutableString stringWithString: @"vLoc: "];
+  [s appendString: NSStringFromPoint(vLoc)];
+  if (_viewport)
+  {
+    NSAffineTransform *itx;
+    NSPoint wLoc;
+    itx = [[NSAffineTransform alloc] initWithTransform: [_viewport transform]];
+    [itx invert];
+    wLoc = [itx transformPoint: vLoc];
+    [s appendString: @"  wLoc: "];
+    [s appendString: NSStringFromPoint(wLoc)];
+    RELEASE(itx);
+  }
+
+  [_infoBar setStringValue: s];
+}
+
 - (void) rubberbandWithEvent: (NSEvent *) theEvent
 {
   NSPoint vLoc1;
@@ -249,6 +299,8 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   NSRect vBounds;
 
   [self rubberbandWithEvent:theEvent point1:&vLoc1 point2:&vLoc2];
+  if (! _viewport)
+    return;
   vBounds = RectFromPoints(vLoc1, vLoc2);
   itx = [[NSAffineTransform alloc] initWithTransform: [_viewport transform]];
   [itx invert];
@@ -276,6 +328,7 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
     {
       theEvent = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
       *point2 = [self localPoint: theEvent];
+      [self updateCursorLocation: theEvent];
       //NSLog(@"curPoint = %@", NSStringFromPoint(*point2));
 
       if (NSEqualPoints(*point1, *point2))
@@ -304,6 +357,14 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
      }
    _rubberbandRect = NSZeroRect;
 }
+
+- (void) removeTrack
+{
+  if (_trackId)
+    [self removeTrackingRect: _trackId];
+  _trackId = 0;
+}
+
   
 - (void) keyDown: (NSEvent *) theEvent
 {
