@@ -9,7 +9,15 @@
   return NO;
 }
 
-- (void) awakeFromGSMarkup
+/**
+ * Invoked on notification that application will become active.
+ */
+- (void)applicationWillFinishLaunching:(NSNotification *)aNotification
+{
+  NSDebugLog(@"#applicationWillFinishLaunching");
+}
+
+ - (void) awakeFromGSMarkup
 {
   NSDebugLog(@"#awakeFromGSMarkup");
 }

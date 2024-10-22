@@ -198,9 +198,9 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
   [self drawElements: [_structure elements]];
 
   NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow]; 
-  NSString* str = [NSString stringWithFormat: @"Elapsed time: %f",
-                                              fabs(elapsedTime)];
-  NSLog(str);
+  NSString* str = [NSString stringWithFormat: @"Elapsed time: %f msecs",
+                                              fabs(elapsedTime) * 1000.0];
+  NSLog(@ "%@", str);
   [_offImage unlockFocus];
   return _offImage;
 }
@@ -310,7 +310,7 @@ CGFloat DistanceFromPoints(NSPoint a, NSPoint b);
 @implementation GdsStructureView (Private)
 - (void) viewFrameChanged: (NSNotification *) aNotification
 {
-  NSDebugLog(@"#viewFrameChanged:");
+  NSDebugLog(@"#viewFrameChanged: %@", aNotification);
   [_viewport setPortSize: [self frame].size];
   [self removeTrack];
   _trackId = [self addTrackingRect:[self bounds] owner:self userData:NULL assumeInside:NO];

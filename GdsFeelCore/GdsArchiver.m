@@ -59,7 +59,7 @@ static GdsZipArchiver *sDefaultArchiver = nil;
                     [NSArray arrayWithObjects: @"-t", fileName, nil]
                              extract: YES
                             exitCode: &code];
-  NSDebugLog(@"%@", resultString);
+  NSDebugLLog(@"GdsArchiver", @"%@", resultString);
   return code == 0;
 }
 

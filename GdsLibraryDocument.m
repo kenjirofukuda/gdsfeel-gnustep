@@ -61,7 +61,7 @@
 
 
 @implementation GdsLibraryDocument (TableView)
-- (int) numberOfRowsInTableView: (NSTableView*)aTableView
+- (NSInteger) numberOfRowsInTableView: (NSTableView*)aTableView
 {
   if (_library == nil)
     {
@@ -72,7 +72,7 @@
 
 - (id)          tableView: (NSTableView*)aTableView 
 objectValueForTableColumn: (NSTableColumn*)aTableColumn 
-                      row: (int)rowIndex
+                      row: (NSInteger)rowIndex
 {
   if ([[aTableColumn identifier] isEqualToString: @"Name"])
     {
