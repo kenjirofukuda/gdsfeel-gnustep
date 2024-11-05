@@ -11,6 +11,13 @@
        NSUnixExtensions = ("DB");
        NSRole = Editor;
        NSDocumentClass = GdsLibraryDocument;
+    },
+    {
+       NSName = "gds";
+       NSHumanReadableName = "GDSII Database Library";
+       NSUnixExtensions = ("gds");
+       NSRole = Editor;
+       NSDocumentClass = GdsLibraryDocument;
     }
   );
 }

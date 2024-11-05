@@ -83,7 +83,7 @@
 - (void) _addElement:(GdsElement *) newElement
 {
   NSDebugLog(@"%@", @"_addElement");
-  [_elements addObject: newElements];
+  [_elements addObject: newElement];
 }
 
 

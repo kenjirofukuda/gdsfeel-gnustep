@@ -2,8 +2,9 @@
 #import <AppKit/AppKit.h>
 #import <Renaissance/Renaissance.h>
 #import "GdsLibraryDocument.h"
+#import "GdsFeelCore/GdsInform.h"
 
-@interface GdsLibraryDocument (Private)
+@interface GdsLibraryDocument(Private)
 - (void) logOutlet;
 @end
 
@@ -25,12 +26,23 @@
   [super close];
 }
 
-- (BOOL) readFromURL: (NSURL *) absoluteURL 
-              ofType: (NSString *) typeName 
-               error: (NSError **) outError
+- (BOOL) readFromURL: (NSURL *)absoluteURL
+              ofType: (NSString *)typeName
+               error: (NSError **)outError
 {
   NSString *fileName = [absoluteURL path];
-  NSDebugLog(@"open => %@", fileName);
+  NSLog(@"absoluteURL => %@", absoluteURL);
+  NSLog(@"   fileName => %@", fileName);
+  NSLog(@"   typeName => %@", typeName);
+
+  if ([typeName isEqualToString: @"gds"])
+    {
+      GdsInform *inform =
+        AUTORELEASE([[GdsInform alloc] initWithFilename: fileName]);
+      [inform run];
+      return NO;
+    }
+
   BOOL valid = [GdsZipedLibrary isValidDatabase: fileName error: outError];
   if (valid == NO)
     {
@@ -43,14 +55,14 @@
   return YES;
 }
 
-- (void) windowControllerDidLoadNib: (NSWindowController*) windowController
+- (void) windowControllerDidLoadNib: (NSWindowController *)windowController
 {
   [super windowControllerDidLoadNib: windowController];
   NSDebugLog(@"#windowControllerDidLoadNib:");
   NSDebugLog(@"windowController = %@", windowController);
   NSDebugLog(@"window = %@", [windowController window]);
-  [[windowController window] setTitle: [NSString 
-                     stringWithFormat: @"GDSII: %@", [_library keyName]]];
+  [[windowController window] setTitle: [NSString
+                                        stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
   [structureListView setDataSource: self];
   [structureListView setDelegate: self];
@@ -60,8 +72,8 @@
 @end
 
 
-@implementation GdsLibraryDocument (TableView)
-- (NSInteger) numberOfRowsInTableView: (NSTableView*)aTableView
+@implementation GdsLibraryDocument(TableView)
+- (NSInteger) numberOfRowsInTableView: (NSTableView *)aTableView
 {
   if (_library == nil)
     {
@@ -70,26 +82,26 @@
   return [[_library structureNames] count];
 }
 
-- (id)          tableView: (NSTableView*)aTableView 
-objectValueForTableColumn: (NSTableColumn*)aTableColumn 
-                      row: (NSInteger)rowIndex
+- (id) tableView: (NSTableView *)aTableView
+  objectValueForTableColumn: (NSTableColumn *)aTableColumn
+                        row: (NSInteger)rowIndex
 {
   if ([[aTableColumn identifier] isEqualToString: @"Name"])
     {
-      return [[_library structureNames] objectAtIndex: rowIndex]; 
+      return [[_library structureNames] objectAtIndex: rowIndex];
     }
   return nil;
 }
 @end
 
 
-@implementation GdsLibraryDocument (TableViewDelegate)
-- (void) tableViewSelectionDidChange: (NSNotification*)aNotification
+@implementation GdsLibraryDocument(TableViewDelegate)
+- (void) tableViewSelectionDidChange: (NSNotification *)aNotification
 {
   NSDebugLog(@"#tableViewSelectionDidChange: %@", aNotification);
   NSString *structureName;
-  structureName = [[_library structureNames] 
-        objectAtIndex: [structureListView selectedRow]];
+  structureName = [[_library structureNames]
+                   objectAtIndex: [structureListView selectedRow]];
   GdsStructure *structure;
   structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
@@ -98,7 +110,7 @@ objectValueForTableColumn: (NSTableColumn*)aTableColumn
 @end
 
 
-@implementation GdsLibraryDocument (Private)
+@implementation GdsLibraryDocument(Private)
 - (void) logOutlet
 {
   NSDebugLog(@"infoBarView = %@", infoBarView);

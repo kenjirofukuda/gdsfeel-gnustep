@@ -11,6 +11,7 @@ ${LIBRARY_NAME}_OBJC_FILES = \
 	GdsLayer.m \
 	GdsLibrary.m \
 	GdsZipedLibrary.m \
+	GdsInform.m \
 	GdsElement.m 
 
 ifeq ($(FOUNDATION_LIB),apple)
