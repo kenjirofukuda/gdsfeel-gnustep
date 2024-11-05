@@ -6,6 +6,7 @@ ${LIBRARY_NAME}_OBJC_FILES = \
 	NSArray+Elements.m \
 	GdsArchiver.m \
 	GdsStructure.m \
+	GdsZipedStructure.m \
 	GdsViewport.m \
 	GdsLayer.m \
 	GdsLibrary.m \

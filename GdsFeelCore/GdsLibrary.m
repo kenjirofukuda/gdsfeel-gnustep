@@ -114,7 +114,7 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
 - (void) _addStructure:(GdsStructure *) newStructure
 {
-  NSDebugLog(@"%@", @"addStructure");
+  NSDebugLog(@"%@", @"_addStructure");
   [_structures addObject: newStructure];
   [_structureMap setObject: newStructure forKey: [newStructure keyName]];
 }
