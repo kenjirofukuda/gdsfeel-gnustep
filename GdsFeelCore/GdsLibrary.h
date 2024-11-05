@@ -18,6 +18,7 @@ extern NSString * const GdsLibraryErrorDomain;
   GdsLayers *_layers;
 }
 
+- (id) init;
 - (id) initWithPath: (NSString *) fileName;
 - (void) dealloc;
 
@@ -35,22 +36,7 @@ extern NSString * const GdsLibraryErrorDomain;
 - (NSArray *) lookupStructureNames;
 - (void) loadStructures;
 
+- (void) _addStructure: (GdsStructure *) newStructure;
 @end
-
-@interface GdsZipedLibrary : GdsLibrary
-{
-  NSString *_folderPath;
-  GdsZipArchiver *_archiver;
-}
-- (NSString *) pathToExtract;
-- (void) openForReading;
-- (void) closeForReading;
-+ (BOOL) isValidDatabase: (NSString *)fileName
-                   error: (NSError **) outError;
-@end
-
-
-
-
 
 // vim: filetype=objc ts=2 sw=2 expandtab

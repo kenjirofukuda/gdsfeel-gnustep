@@ -2,7 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <Renaissance/Renaissance.h>
-#import "GdsFeelCore/GdsLibrary.h"
+#import "GdsFeelCore/GdsZipedLibrary.h"
 #import "GdsStructureView.h"
 
 @interface GdsLibraryDocument : GSMarkupDocument

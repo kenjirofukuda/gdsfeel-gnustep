@@ -1,0 +1,16 @@
+style=gnu
+indent=spaces=2
+pad-comma
+pad-oper
+unpad-paren
+pad-header
+pad-method-prefix
+pad-return-type
+unpad-param-type
+align-method-colon
+align-pointer=name
+pad-method-colon=after
+max-code-length=100
+max-continuation-indent=100
+break-one-line-headers
+mode=c
