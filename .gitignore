@@ -3,4 +3,5 @@
 *~
 *#
 obj/
-.app
+*.app
+.ccls-cache

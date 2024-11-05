@@ -31,13 +31,13 @@
 {
   NSString *fileName = [absoluteURL path];
   NSDebugLog(@"open => %@", fileName);
-  BOOL valid = [GdsLibrary isValidDatabase: fileName error: outError];
+  BOOL valid = [GdsZipedLibrary isValidDatabase: fileName error: outError];
   if (valid == NO)
     {
       return NO;
     }
 
-  _library = [[GdsLibrary alloc] initWithPath: fileName];
+  _library = [[GdsZipedLibrary alloc] initWithPath: fileName];
   [_library openForReading];
   NSDebugLog(@"structures = %@", [[_library structureNames] description]);
   return YES;

@@ -157,7 +157,7 @@
       NSWarnLog(@"directory node found");
       return;
     }
-  NSDebugLog(@"before perm = %o", perm);
+  NSDebugLog(@"before perm = %lo", perm);
   if ((perm & 0100) == 0)
      {
        [[NSFileManager defaultManager]
@@ -172,7 +172,7 @@
                      fileAttributesAtPath: _directoryPath
                              traverseLink: YES] mutableCopy];
   perm = [fileAttributes filePosixPermissions];
-  NSDebugLog(@"after  perm = %o", perm);
+  NSDebugLog(@"after  perm = %lo", perm);
   RELEASE(fileAttributes);
 }
 

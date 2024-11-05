@@ -7,7 +7,7 @@
 
 @interface GdsLibraryDocument : GSMarkupDocument
 {
-  GdsLibrary *_library;
+  GdsZipedLibrary *_library;
   NSArray *_structureNames;
 
   IBOutlet GdsStructureView *structureView;

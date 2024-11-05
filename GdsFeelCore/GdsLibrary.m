@@ -8,16 +8,10 @@
 NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
 @interface GdsLibrary (Private)
-- (NSString *) pathToReaderMarker;
-- (NSString *) pathToLayersInformation;
-- (void) touchReaderMarker;
-- (BOOL) hasReaderMarker;
-- (BOOL) isDirectory: (NSString *) fileName;
-- (BOOL) isFile: (NSString *) fileName;
-- (NSString *) directoryPathForStructureName: (NSString *) structureName;
-- (void) loadStructures;
 - (NSArray *) lookupStructureNames;
+- (void) loadStructures;
 @end
+
 
 @implementation GdsLibrary
 - (id) initWithPath: (NSString *) fileName
@@ -26,8 +20,6 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   if (self != nil) 
     {
       ASSIGNCOPY(_path, fileName);
-      ASSIGN(_folderPath, [_path stringByDeletingLastPathComponent]);
-      _archiver = [[GdsZipArchiver alloc] init];
     }
   return self;
 }
@@ -35,7 +27,6 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 - (void) dealloc
 {
   RELEASE(_path);
-  RELEASE(_archiver);
   RELEASE(_structures);
   RELEASE(_structureNames);
   RELEASE(_structureMap);
@@ -60,24 +51,124 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
 - (void) debugLog
 {
-  NSDebugLog(@"       folder = %@", _folderPath);
   NSDebugLog(@"      keyName = %@", [self keyName]);
   NSDebugLog(@"    localName = %@", [self localName]);
-  NSDebugLog(@"pathToExtract = %@", [self pathToExtract]);
   NSDebugLog(@"       isOpen = %@", [self isOpen] ? @"YES" : @"NO");
 }
+
+- (BOOL) isOpen
+{
+  return NO; // must be overridden
+}
+
+- (NSArray *) structures
+{
+  [self loadStructures];
+  return [NSArray arrayWithArray: _structures];
+}
+
+- (GdsStructure *) structureForKey: (NSString *) keyName
+{
+  [self loadStructures];
+  return [_structureMap objectForKey: keyName];
+}
+
+- (NSArray *) structureNames
+{
+  if (_structureNames == nil)
+    {
+      ASSIGN(_structureNames, [self lookupStructureNames]);
+    }
+  return _structureNames;
+}
+
+- (GdsLayers *) layers
+{
+  if (_layers == nil)
+    {
+      ASSIGN(_layers,
+       [[GdsLayers alloc] init]);
+    }
+  return _layers;
+}
+
+- (NSArray *) lookupStructureNames;
+{
+  return [NSArray array];
+}
+
+- (void) loadStructures;
+{
+  // must be overridden
+}
+
+@end 
+
+
+@interface GdsZipedLibrary (Private)
+- (NSString *) pathToReaderMarker;
+- (NSString *) pathToLayersInformation;
+- (void) touchReaderMarker;
+- (BOOL) hasReaderMarker;
+- (BOOL) isDirectory: (NSString *) fileName;
+- (BOOL) isFile: (NSString *) fileName;
+- (NSString *) directoryPathForStructureName: (NSString *) structureName;
+- (void) loadStructures;
+@end
+
+
+@implementation GdsZipedLibrary
+- (id) initWithPath: (NSString *) fileName
+{
+  self = [super initWithPath: fileName];
+  if (self != nil) 
+    {
+      ASSIGN(_folderPath, [_path stringByDeletingLastPathComponent]);
+      _archiver = [[GdsZipArchiver alloc] init];
+    }
+  return self;
+}
+
+
+- (void) dealloc
+{
+  RELEASE(_archiver);
+  [super dealloc];
+}
+
+
+- (BOOL) isOpen
+{
+  BOOL exists = [self isDirectory: [self pathToExtract]];
+  return exists;
+}
+
+
+- (GdsLayers *) layers
+{
+  if (_layers == nil)
+    {
+      ASSIGN(_layers,
+       [[GdsLayers alloc] 
+         initWithPath: [self pathToLayersInformation] library: self]);
+    }
+  return _layers;
+}
+
+
+- (void) debugLog
+{
+  [super debugLog];
+  NSDebugLog(@"       folder = %@", _folderPath);
+  NSDebugLog(@"pathToExtract = %@", [self pathToExtract]);
+}
+
 
 - (NSString *) pathToExtract
 {
   return [NSString pathWithComponents:
            [NSArray arrayWithObjects:
              _folderPath, @".editlibs", [self localName], nil]];
-}
-
-- (BOOL) isOpen
-{
-  BOOL exists = [self isDirectory: [self pathToExtract]];
-  return exists;
 }
 
 - (void) openForReading
@@ -154,41 +245,9 @@ NSString * const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   return result;
 }
 
-- (NSArray *) structures
-{
-  [self loadStructures];
-  return [NSArray arrayWithArray: _structures];
-}
+@end
 
-- (GdsStructure *) structureForKey: (NSString *) keyName
-{
-  [self loadStructures];
-  return [_structureMap objectForKey: keyName];
-}
-
-- (NSArray *) structureNames
-{
-  if (_structureNames == nil)
-    {
-      ASSIGN(_structureNames, [self lookupStructureNames]);
-    }
-  return _structureNames;
-}
-
-- (GdsLayers *) layers
-{
-  if (_layers == nil)
-    {
-      ASSIGN(_layers,
-       [[GdsLayers alloc] 
-         initWithPath: [self pathToLayersInformation] library: self]);
-    }
-  return _layers;
-}
-
-@end 
-
-@implementation GdsLibrary (Private)
+@implementation GdsZipedLibrary (Private)
 - (void) touchReaderMarker
 {
   [@"touch" writeToFile: [self pathToReaderMarker] atomically: YES];
