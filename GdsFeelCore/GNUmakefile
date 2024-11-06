@@ -12,7 +12,8 @@ ${LIBRARY_NAME}_OBJC_FILES = \
 	GdsLibrary.m \
 	GdsZipedLibrary.m \
 	GdsInform.m \
-	GdsElement.m 
+	GdsElement.m \
+	GdsElement+XML.m
 
 ifeq ($(FOUNDATION_LIB),apple)
   ADDITIONAL_INCLUDE_DIRS += -framework Renaissance

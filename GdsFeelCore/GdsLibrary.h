@@ -6,12 +6,15 @@
 @class GdsStructure;
 @class GdsLayers;
 
-extern NSString * const GdsLibraryErrorDomain;
+extern NSString *const GdsLibraryErrorDomain;
 
 @interface GdsLibrary : NSObject
 {
+  double _userUnit;
+  double _meterUnit;
   NSString *_path;
   NSString *_keyName;
+  NSString *_name;
   NSMutableArray *_structures;
   NSMutableDictionary *_structureMap;
   NSArray *_structureNames;
@@ -19,15 +22,24 @@ extern NSString * const GdsLibraryErrorDomain;
 }
 
 - (id) init;
-- (id) initWithPath: (NSString *) fileName;
+- (id) initWithPath: (NSString *)fileName;
 - (void) dealloc;
+
+- (NSString *) name;
+- (void) setName: (NSString *)name;
+
+- (double) userUnit;
+- (void) setUserUnit: (double)unit;
+
+- (double) meterUnit;
+- (void) setMeterUnit: (double)unit;
 
 - (NSString *) localName;
 - (NSString *) keyName;
 
 - (NSArray *) structureNames;
 - (NSArray *) structures;
-- (GdsStructure *) structureForKey: (NSString *) keyName;
+- (GdsStructure *) structureForKey: (NSString *)keyName;
 - (GdsLayers *) layers;
 
 - (BOOL) isOpen;
@@ -36,7 +48,7 @@ extern NSString * const GdsLibraryErrorDomain;
 - (NSArray *) lookupStructureNames;
 - (void) loadStructures;
 
-- (void) _addStructure: (GdsStructure *) newStructure;
+- (void) addStructure: (GdsStructure *)newStructure;
 @end
 
 // vim: filetype=objc ts=2 sw=2 expandtab

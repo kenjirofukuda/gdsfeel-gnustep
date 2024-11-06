@@ -80,10 +80,11 @@
 }
 
 
-- (void) _addElement:(GdsElement *) newElement
+- (void) addElement:(GdsElement *) newElement
 {
-  NSDebugLog(@"%@", @"_addElement");
+  NSDebugLog(@"%@", @"addElement");
   [_elements addObject: newElement];
+  [newElement setStructure: self];
 }
 
 

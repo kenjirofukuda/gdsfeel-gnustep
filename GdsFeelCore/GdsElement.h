@@ -1,6 +1,5 @@
 // -*- mode: ObjC -*-
 #import <Foundation/Foundation.h>
-#import <GNUstepBase/GSXML.h>
 
 @class GdsStructure;
 
@@ -13,10 +12,7 @@
   NSArray *_outlinePoints;
 }
 - (id) init;
-- (id) initWithXMLNode: (GSXMLNode *) xmlNode 
-             structure: (GdsStructure *) structure;
 - (void) dealloc;
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
 
 - (NSArray *) vertices;
 - (NSArray *) outlinePoints;
@@ -24,11 +20,9 @@
 - (NSRect) boundingBox;
 - (NSString *) typeName;
 - (GdsStructure *) structure;
+- (void) setStructure: (GdsStructure *)structure;
 - (void) debugLog;
 - (BOOL) isReference;
-
-+ (GdsElement *) elementFromXMLNode: (GSXMLNode *) xmlNode
-                          structure: (GdsStructure *) structure;
 
 - (NSArray *) lookupOutlinePoints;
 - (NSRect) lookupBoundingBox;
@@ -44,7 +38,6 @@
 - (int) layerNumber;
 - (int) dataType;
 - (void) debugLog;
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
 @end
 
 
@@ -59,7 +52,6 @@
   int _pathType;
 }
 - (id) init;
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
 - (NSString *) typeName;
 - (float) width;
 - (int) pathType;
@@ -76,8 +68,8 @@
   NSAffineTransform *_transform;
 }
 - (id) init;
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
 - (NSString *) referenceName;
+- (void) setReferenceName: (NSString *) name;
 - (float) angle;
 - (float) mag;
 - (BOOL) reflected;
@@ -101,7 +93,6 @@
   NSArray *_transforms;
 }
 - (id) init;
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
 - (void) debugLog;
 
 - (NSString *) typeName;
@@ -113,4 +104,4 @@
 - (NSArray *) transforms;
 @end
 
-// vim: ts=2 sw=2 expandtab filetype=objc 
+// vim: ts=2 sw=2 expandtab filetype=objc

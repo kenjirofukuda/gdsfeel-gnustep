@@ -25,7 +25,7 @@
 - (NSRect) boundingBox;
 - (NSArray *) elements;
 
-- (void) _addElement: (GdsElement *)newElement;
+- (void) addElement: (GdsElement *)newElement;
 - (void) loadElements;
 - (NSRect) lookupBoundingBox;
 @end

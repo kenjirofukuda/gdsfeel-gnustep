@@ -2,35 +2,25 @@
 #import "osxportability.h"
 #import "GdsElement.h"
 #import "GdsStructure.h"
+#import "GdsBase.h"
 #import "NSArray+Points.h"
 #import <math.h>
 
 static int sKeyNumber = 0;
 
-@interface GdsElement (Private)
+@interface GdsElement(Private)
 - (void) debugKeyValueLog;
 @end
 
 @implementation GdsElement
 - (id) init
 {
-  return [self initWithXMLNode: nil structure: nil];
-}
-
-- (id) initWithXMLNode: (GSXMLNode *) xmlNode 
-             structure: (GdsStructure *) structure
-{
   self = [super init];
-  if (self) 
+  if (self)
     {
       _xyArray = [[NSArray alloc] init];
       sKeyNumber++;
       _keyNumber = sKeyNumber;
-      _structure = structure;
-      if (xmlNode != nil)
-        {
-          [self loadFromXMLNode: xmlNode];
-        }
       return self;
     }
   return nil;
@@ -38,7 +28,7 @@ static int sKeyNumber = 0;
 
 - (void) dealloc
 {
-  _structure = nil;
+  RELEASE(_structure);
   RELEASE(_xyArray);
   RELEASE(_boundingBox);
   RELEASE(_outlinePoints);
@@ -53,6 +43,11 @@ static int sKeyNumber = 0;
 - (GdsStructure *) structure
 {
   return _structure;
+}
+
+- (void) setStructure: (GdsStructure *)structure
+{
+  ASSIGN(_structure, structure);
 }
 
 - (NSArray *) vertices
@@ -72,77 +67,6 @@ static int sKeyNumber = 0;
 - (NSArray *) lookupOutlinePoints
 {
   return [self vertices];
-}
-
-static NSPoint pointFromXYstring(NSString *xyExpr)
-{
-  NSArray *items = [xyExpr componentsSeparatedByString: @" "];
-  float x = [[items objectAtIndex: 0] floatValue];
-  float y = [[items objectAtIndex: 1] floatValue];
-  return NSMakePoint(x, y);
-}
-
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode
-{
-  _keyNumber = [[xmlNode objectForKey: @"keyNumber"] intValue]; 
-  GSXMLNode *node = [xmlNode firstChildElement];
-  GSXMLNode *verticesNode = nil;
-  while (node != nil)
-    {
-      if ([[node name] isEqualToString: @"vertices"])
-        {
-          verticesNode = node;
-          break;
-        } 
-      node = [node nextElement];
-    }
-  if (verticesNode == nil)
-    {
-      NSWarnLog(@"missing vertices node");
-      return;
-    }
-  node = [verticesNode firstChildElement];
-  NSMutableArray *xyArray = [[NSMutableArray alloc] init];
-  while (node != nil)
-    {
-      if ([[node name] isEqualToString: @"xy"])
-        {
-          [xyArray addPoint: pointFromXYstring([node content])];
-        } 
-      node = [node nextElement];
-    }
-  ASSIGN(_xyArray, [NSArray arrayWithArray: xyArray]);
-  RELEASE(xyArray);
-}
-
-+ (GdsElement *) elementFromXMLNode: (GSXMLNode *) xmlNode
-                          structure: (GdsStructure *) structure
-{
-  NSString *typeName = [xmlNode objectForKey: @"type"];
-  GdsElement *newElement = nil;
-  Class class = Nil;
-  if ([typeName isEqualToString: @"boundary"])
-    {
-      class = [GdsBoundary class];
-    }
-  if ([typeName isEqualToString: @"path"])
-    {
-      class = [GdsPath class];
-    }
-  if ([typeName isEqualToString: @"sref"])
-    {
-      class = [GdsSref class];
-    }
-  if ([typeName isEqualToString: @"aref"])
-    {
-      class = [GdsAref class];
-    }
-  if (class != Nil)
-    {
-      newElement = [[class alloc]
-         initWithXMLNode: xmlNode structure: structure];        
-    }
-  return newElement;
 }
 
 - (int) keyNumber
@@ -178,11 +102,11 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 }
 @end
 
-@implementation GdsElement (Private)
+@implementation GdsElement(Private)
 - (void) debugKeyValueLog
 {
-  NSDebugLog(@"       type = %@", [self valueForKey:@"typeName"]);
-  NSDebugLog(@"  keyNumber = %@", [self valueForKey:@"keyNumber"]);
+  NSDebugLog(@"       type = %@", [self valueForKey: @"typeName"]);
+  NSDebugLog(@"  keyNumber = %@", [self valueForKey: @"keyNumber"]);
   NSDebugLog(@"bound width = %f", NSWidth([self boundingBox]));
 }
 
@@ -202,19 +126,12 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
   return nil;
 }
 
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode
-{
-  [super loadFromXMLNode: xmlNode];
-  _layerNumber = [[xmlNode objectForKey: @"layerNumber"] intValue]; 
-  _dataType = [[xmlNode objectForKey: @"datatype"] intValue]; 
-}
-
-- (int)layerNumber
+- (int) layerNumber
 {
   return _layerNumber;
 }
 
-- (int)dataType
+- (int) dataType
 {
   return _dataType;
 }
@@ -246,21 +163,21 @@ getAngle(CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2)
     angle =  M_PI_2 * ((y2 > y1) ? 1 : -1);
   else
     {
-      angle = atan(fabs(y2 - y1)/fabs(x2 - x1));
-    if (y2 >= y1)
-      {
-        if (x2 >= x1)
-          angle += 0;
-        else
-          angle = M_PI - angle;
-      }
-    else
-      {
-        if (x2 >= x1)
-          angle = 2 * M_PI - angle;
-        else
-          angle += M_PI;
-      }
+      angle = atan(fabs(y2 - y1) / fabs(x2 - x1));
+      if (y2 >= y1)
+        {
+          if (x2 >= x1)
+            angle += 0;
+          else
+            angle = M_PI - angle;
+        }
+      else
+        {
+          if (x2 >= x1)
+            angle = 2 * M_PI - angle;
+          else
+            angle += M_PI;
+        }
     }
   return angle;
 }
@@ -274,15 +191,15 @@ getDeltaXY(CGFloat hw, NSPoint p1, NSPoint p2, NSPoint p3)
   NSPoint pnt;
   alpha = getAngle(p1.x, p1.y, p2.x, p2.y);
   beta = getAngle(p2.x, p2.y, p3.x, p3.y);
-  theta = (alpha + beta + M_PI)/2.0;
+  theta = (alpha + beta + M_PI) / 2.0;
   if (fabs(cos((alpha - beta) / 2.0)) < EPS)
     {
       NSWarnLog(@"Internal algorithm error: cos((alpha - beta)/2) = 0");
       return NSZeroPoint;
     }
-  r = ((double) hw) / cos((alpha - beta) / 2.0); 
-  pnt.x = (CGFloat) (r * cos(theta));
-  pnt.y = (CGFloat) (r * sin(theta));
+  r = ((double) hw) / cos((alpha - beta) / 2.0);
+  pnt.x = (CGFloat)(r * cos(theta));
+  pnt.y = (CGFloat)(r * sin(theta));
   return pnt;
 }
 
@@ -295,7 +212,7 @@ getEndDeltaXY(CGFloat hw, NSPoint p1, NSPoint p2)
   theta = alpha;
   r = hw;
   pnt.x = (CGFloat)(-r * sin(theta));
-  pnt.y = (CGFloat)( r * cos(theta));
+  pnt.y = (CGFloat)(r * cos(theta));
   return pnt;
 }
 
@@ -339,7 +256,7 @@ NSArray *PathToBoundary(GdsPath *path)
   for (i = 1; i < numpoints - 1; i++)
     {
       deltaxy = getDeltaXY(hw, path_points[i - 1],
-         path_points[i], path_points[i + 1]);
+                           path_points[i], path_points[i + 1]);
       points[i].x = path_points[i].x + deltaxy.x;
       points[i].y = path_points[i].y + deltaxy.y;
       points[2 * numpoints - i - 1].x = path_points[i].x - deltaxy.x;
@@ -357,17 +274,17 @@ NSArray *PathToBoundary(GdsPath *path)
     }
   else /* Extended end */
     {
-      points[numpoints - 1].x = 
+      points[numpoints - 1].x =
         path_points[numpoints - 1].x + deltaxy.x + deltaxy.y;
       points[numpoints - 1].y =
         path_points[numpoints - 1].y + deltaxy.y + deltaxy.x;
-      points[numpoints].x = 
+      points[numpoints].x =
         path_points[numpoints - 1].x - deltaxy.x + deltaxy.y;
-      points[numpoints].y = 
+      points[numpoints].y =
         path_points[numpoints - 1].y - deltaxy.y + deltaxy.x;
     }
-  free(path_points);  
-  NSArray *result = [NSArray pointsFromNSPointPtr: points 
+  free(path_points);
+  NSArray *result = [NSArray pointsFromNSPointPtr: points
                                             count: (numpoints * 2 + 1)];
   return result;
 }
@@ -376,20 +293,13 @@ NSArray *PathToBoundary(GdsPath *path)
 - (id) init
 {
   self = [super init];
-  if (self != nil) 
+  if (self != nil)
     {
       _width = 0.0;
       _pathType = 0;
       return self;
     }
   return nil;
-}
-
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode
-{
-  [super loadFromXMLNode: xmlNode];
-  _width = [[xmlNode objectForKey: @"width"] floatValue]; 
-  _pathType = [[xmlNode objectForKey: @"pathtype"] intValue]; 
 }
 
 - (NSString *) typeName
@@ -425,7 +335,7 @@ NSArray *PathToBoundary(GdsPath *path)
 - (id) init
 {
   self = [super init];
-  if (self != nil) 
+  if (self != nil)
     {
       _referenceName = [[NSString alloc] init];
       _angle = 0.0;
@@ -461,8 +371,8 @@ NSArray *PathToBoundary(GdsPath *path)
   if (_referenceStructure == nil)
     {
       GdsStructure *referenceStructure = nil;
-      referenceStructure = 
-        [[_structure library] structureForKey: [self referenceName]]; 
+      referenceStructure =
+        [[_structure library] structureForKey: [self referenceName]];
       if (referenceStructure == nil)
         {
           NSWarnLog(@"missing strucutre named: %@", [self referenceName]);
@@ -481,7 +391,7 @@ NSArray *PathToBoundary(GdsPath *path)
 {
   NSRect structureBounds = [[self referenceStructure] boundingBox];
   return  [[NSArray pointsFromNSRect: structureBounds]
-      transformedPoints: [self transform]];
+                   transformedPoints: [self transform]];
 }
 
 - (NSArray *) lookupOutlinePoints
@@ -489,46 +399,6 @@ NSArray *PathToBoundary(GdsPath *path)
   return [self basicOutlinePoints];
 }
 
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode
-{
-  [super loadFromXMLNode: xmlNode];
-  ASSIGN(_referenceName, [xmlNode objectForKey: @"sname"]);
-  NSDictionary *attr = [xmlNode attributes];
-  NSString *valueStr;
-  valueStr = [attr valueForKey: @"mag"];
-  if (valueStr == nil)
-    {
-      valueStr = @"1.0";
-    }
-  _mag = [valueStr floatValue];
-  valueStr = [attr valueForKey: @"angle"];
-  if (valueStr == nil) 
-    {
-      valueStr = @"0.0";
-    }
-  _angle = [valueStr floatValue];
-  valueStr = [attr valueForKey: @"reflected"];
-  if (valueStr == nil)
-    {
-      valueStr = @"false";
-    }
-  else
-    {
-      if ([valueStr isEqualToString: @"true"]) 
-        {
-          valueStr = @"true";
-        } 
-      else if ([valueStr isEqualToString: @"false"]) 
-        {
-          valueStr = @"false";
-        } 
-      else
-        {
-          valueStr = @"false";
-        }
-    }
-  _reflected = [valueStr isEqualToString: @"true"] == YES;
-}
 
 - (void) dealloc
 {
@@ -539,6 +409,11 @@ NSArray *PathToBoundary(GdsPath *path)
 - (NSString *) referenceName
 {
   return _referenceName;
+}
+
+- (void) setReferenceName: (NSString *)name
+{
+  ASSIGNCOPY(_referenceName, name);
 }
 
 - (float) angle
@@ -562,7 +437,7 @@ NSArray *PathToBoundary(GdsPath *path)
     {
       return (NSPoint) [[_xyArray objectAtIndex: 0] pointValue];
     }
-  return NSMakePoint(0,0); 
+  return NSMakePoint(0, 0);
 }
 
 - (void) debugLog
@@ -582,14 +457,14 @@ NSArray *PathToBoundary(GdsPath *path)
 {
   return @"SREF";
 }
-@end 
+@end
 
 
 @implementation GdsAref
 - (id) init
 {
   self = [super init];
-  if (self != nil) 
+  if (self != nil)
     {
       _rowCount = 1;
       _columnCount = 1;
@@ -600,55 +475,6 @@ NSArray *PathToBoundary(GdsPath *path)
   return nil;
 }
 
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode
-{
-  [super loadFromXMLNode: xmlNode];
-  GSXMLNode *node = [xmlNode firstChildElement];
-  GSXMLNode *ashapeNode = nil;
-  while (node != nil)
-    {
-      if ([[node name] isEqualToString: @"ashape"])
-        {
-          ashapeNode = node;
-          break;
-        } 
-      node = [node nextElement];
-    }
-  if (ashapeNode == nil)
-    {
-      NSWarnLog(@"missing aref node");
-      return;
-    }
-  NSDictionary *attr = [ashapeNode attributes];
-  NSString *valueStr;
-  valueStr = [attr valueForKey: @"rows"];
-  if (valueStr == nil) 
-    {
-      valueStr = @"1";
-    }
-  _rowCount = [valueStr intValue];
-
-  valueStr = [attr valueForKey: @"cols"];
-  if (valueStr == nil) 
-    {
-      valueStr = @"1";
-    }
-  _columnCount = [valueStr intValue];
-
-  valueStr = [attr valueForKey: @"row-spacing"];
-  if (valueStr == nil) 
-    {
-      valueStr = @"0.0";
-    }
-  _rowSpacing = [valueStr floatValue];
-
-  valueStr = [attr valueForKey: @"column-spacing"];
-  if (valueStr == nil)
-    {
-      valueStr = @"0.0";
-    }
-  _columnSpacing = [valueStr floatValue];
-}
 
 - (NSString *) typeName
 {
@@ -687,10 +513,10 @@ NSArray *PathToBoundary(GdsPath *path)
           for (ir = 0; ir < [self rowCount]; ir++)
             {
               CGFloat xOffset, yOffset;
-              xOffset = ic * [self columnSpacing]; 
+              xOffset = ic * [self columnSpacing];
               yOffset = ir * [self rowSpacing];
               NSAffineTransform *offsetTransform;
-              offsetTransform = [NSAffineTransform transform];        
+              offsetTransform = [NSAffineTransform transform];
               [offsetTransform translateXBy: xOffset yBy: yOffset];
               [transforms addObject: offsetTransform];
             }
@@ -712,8 +538,8 @@ NSArray *PathToBoundary(GdsPath *path)
       while ((tx = [iter nextObject]) != nil)
         {
           NSAffineTransform *newTransform;
-          newTransform = [[NSAffineTransform alloc] 
-               initWithTransform: [self transform]];
+          newTransform = [[NSAffineTransform alloc]
+                          initWithTransform: [self transform]];
           [newTransform prependTransform: tx];
           [transforms addObject: newTransform];
           RELEASE(newTransform);
@@ -729,14 +555,14 @@ NSArray *PathToBoundary(GdsPath *path)
   NSRect bounds = [[self referenceStructure] boundingBox];
   //CGFloat newWidth, newHeight;
   //newWidth = [self columnCount] * [self columnSpacing] + bounds.size.width;
-  //newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height; 
+  //newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height;
   return  [[NSArray pointsFromNSRect: bounds]
-      transformedPoints: [self transform]];  
+                   transformedPoints: [self transform]];
 }
 
 - (void) debugLog
 {
-  [super debugLog]; 
+  [super debugLog];
   NSDebugLog(@"     rowCount = %d", [self rowCount]);
   NSDebugLog(@"  columnCount = %d", [self columnCount]);
   NSDebugLog(@"   rowSpacing = %f", [self rowSpacing]);

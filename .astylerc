@@ -13,4 +13,5 @@ pad-method-colon=after
 max-code-length=100
 max-continuation-indent=100
 break-one-line-headers
+indent-cases
 mode=c

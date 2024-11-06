@@ -226,7 +226,7 @@
           newStructure = [[GdsZipedStructure alloc]
                           initWithDirectoryPath: fullPath
                                         library: self];
-          [self _addStructure: newStructure];
+          [self addStructure: newStructure];
           [newStructure debugLog];
         }
     }

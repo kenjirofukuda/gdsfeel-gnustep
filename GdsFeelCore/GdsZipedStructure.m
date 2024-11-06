@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <GNUstepBase/GSXML.h>
 #import "GdsZipedStructure.h"
-#import "GdsElement.h"
+#import "GdsElement+XML.h"
 #import "NSArray+Points.h"
 
 @interface GdsZipedStructure(Private)
@@ -161,7 +161,7 @@
       newElement = [GdsElement elementFromXMLNode: node structure: self];
       if (newElement != nil)
         {
-          [self _addElement: newElement];
+          [self addElement: newElement];
           [newElement debugLog];
         }
       node = [node nextElement];
