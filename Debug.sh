@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 (cd GdsFeelCore; make debug=yes && make install messages=yes GNUSTEP_INSTALLATION_DOMAIN=USER)
-make debug=yes && debugapp ./GdsFeel --GNU-Debug=Record $*
+make debug=yes && debugapp ./GdsFeel --GNU-Debug=Record --GNU-Debug=InformInspect $*

@@ -18,7 +18,7 @@ static int sKeyNumber = 0;
   self = [super init];
   if (self)
     {
-      _xyArray = [[NSArray alloc] init];
+      _coords = [[NSArray alloc] init];
       sKeyNumber++;
       _keyNumber = sKeyNumber;
       return self;
@@ -29,7 +29,7 @@ static int sKeyNumber = 0;
 - (void) dealloc
 {
   RELEASE(_structure);
-  RELEASE(_xyArray);
+  RELEASE(_coords);
   RELEASE(_boundingBox);
   RELEASE(_outlinePoints);
   [super dealloc];
@@ -50,9 +50,19 @@ static int sKeyNumber = 0;
   ASSIGN(_structure, structure);
 }
 
+- (NSArray *) coords
+{
+  return [NSArray arrayWithArray: _coords];
+}
+
+- (void) setCoords: (NSArray *)points
+{
+  ASSIGN(_coords, points);
+}
+
 - (NSArray *) vertices
 {
-  return [NSArray arrayWithArray: _xyArray];
+  return [self coords];
 }
 
 - (NSArray *) outlinePoints
@@ -90,7 +100,7 @@ static int sKeyNumber = 0;
 
 - (NSRect) lookupBoundingBox
 {
-  return [_xyArray lookupBoundingBox];
+  return [_coords lookupBoundingBox];
 }
 
 - (void) debugLog
@@ -430,9 +440,9 @@ PathToBoundary(GdsPath *path)
 
 - (NSPoint) origin
 {
-  if ([_xyArray count] > 0)
+  if ([_coords count] > 0)
     {
-      return (NSPoint)[[_xyArray objectAtIndex: 0] pointValue];
+      return [_coords pointAtIndex: 0];
     }
   return NSMakePoint(0, 0);
 }

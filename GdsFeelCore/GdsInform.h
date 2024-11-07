@@ -15,5 +15,7 @@
 }
 
 - (instancetype) initWithFilename: (NSString *)filename;
+- (void) dealloc;
+- (GdsLibrary *) library;
 - (void) run;
 @end

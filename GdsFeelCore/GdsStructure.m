@@ -77,6 +77,10 @@
 - (void) addElement: (GdsElement *)newElement
 {
   NSDebugLog(@"%@", @"addElement");
+  if (_elements == nil)
+    {
+      _elements = [[NSMutableArray alloc] init];
+    }
   [_elements addObject: newElement];
   [newElement setStructure: self];
 }

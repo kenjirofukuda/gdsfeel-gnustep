@@ -31,7 +31,7 @@ pointFromXYstring(NSString *xyExpr)
   return NSMakePoint(x, y);
 }
 
-- (void) loadFromXMLNode: (GSXMLNode *)xmlNode
+- (void)loadFromXMLNode:(GSXMLNode *)xmlNode
 {
   _keyNumber = [[xmlNode objectForKey: @"keyNumber"] intValue];
   GSXMLNode *node = [xmlNode firstChildElement];
@@ -60,7 +60,7 @@ pointFromXYstring(NSString *xyExpr)
         }
       node = [node nextElement];
     }
-  ASSIGN(_xyArray, [NSArray arrayWithArray: xyArray]);
+  [self setCoords: [NSArray arrayWithArray: xyArray]];
   RELEASE(xyArray);
 }
 

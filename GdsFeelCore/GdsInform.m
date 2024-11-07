@@ -2,6 +2,7 @@
 #import <Foundation/Foundation.h>
 #import "GdsInform.h"
 #import "GdsBase.h"
+#import "NSArray+Points.h"
 
 static NSString *InformInspect = @"InformInspect";
 
@@ -111,6 +112,21 @@ GDSreadString(uint8_t *record, int len)
       ASSIGNCOPY(_filename, filename);
     }
   return self;
+}
+
+- (void) dealloc
+{
+  RELEASE(_filename);
+  RELEASE(_fh);
+  RELEASE(_library);
+  RELEASE(_structure);
+  RELEASE(_element);
+  [super dealloc];
+}
+
+- (GdsLibrary *) library
+{
+  return _library;
 }
 
 - (void) run
@@ -241,6 +257,7 @@ GDSreadString(uint8_t *record, int len)
       {
         NSAssert(_element == nil, @"Previouse element not adding structure");
         ASSIGN(_element, [GdsInform _elementFromStreamRecordType: buff[0]]);
+        NSDebugLLog(@"Record", @"ELEMENT: %@", [_element class]);
       }
       break;
     case ENDEL:
@@ -252,12 +269,32 @@ GDSreadString(uint8_t *record, int len)
           }
       }
       break;
+    case XY:
+      {
+        if (_element != nil )
+          {
+            // NSAssert(_element != nil, @"XY: Current element not alived");
+            NSDebugLLog(@"Record", @"XY: %@", dataArray);
+            NSMutableArray *xyArray = [[NSMutableArray alloc] init];
+            for (int i = 0; i < [dataArray count] / 2; i++)
+              {
+                NSPoint ce;
+                ce.x = [[dataArray objectAtIndex: i * 2] longValue] * [_library userUnit];
+                ce.y = [[dataArray objectAtIndex: i * 2 + 1] longValue] * [_library userUnit];
+                [xyArray addPoint: ce];
+              }
+            [_element setCoords:[NSArray arrayWithArray: xyArray]];
+            RELEASE(xyArray);
+          }
+      }
+      break;
     case SNAME:
       {
         NSAssert(_element != nil, @"SNAME: Current element not alived");
         NSDebugLLog(@"Record", @"SNAME: %@", dataString);
         if ([_element isKindOfClass: [GdsSref class]])
           {
+            NSDebugLLog(@"Record", @"SNAME2: %@", dataString);
             [(GdsSref *) _element setReferenceName: dataString];
           }
       }

@@ -8,6 +8,7 @@
 @end
 
 @interface NSArray (Points)
+- (NSPoint) pointAtIndex: (NSUInteger) index;
 - (NSRect) lookupBoundingBox;
 - (NSPoint *) asNSPointPtr: (int *)outCountPoints;
 - (NSArray *) transformedPoints: (NSAffineTransform *)transform;

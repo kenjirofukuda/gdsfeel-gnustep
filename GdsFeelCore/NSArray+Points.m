@@ -27,7 +27,12 @@ static float BIGVAL = FLT_MAX / 2.0;
 @end
 
 @implementation NSArray (Points)
-- (NSPoint *) asNSPointPtr: (int *)outCountPoints
+- (NSPoint) pointAtIndex: (NSUInteger) index
+{
+  return [[self objectAtIndex: index] pointValue];
+}
+
+- (NSPoint *)asNSPointPtr:(int *)outCountPoints
 {
   NSPoint *points = malloc(sizeof(NSPoint) * [self count]);
   if (outCountPoints)

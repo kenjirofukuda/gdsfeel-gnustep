@@ -37,10 +37,11 @@
 
   if ([typeName isEqualToString: @"gds"])
     {
-      GdsInform *inform
-        = AUTORELEASE([[GdsInform alloc] initWithFilename: fileName]);
+      GdsInform *inform = [[GdsInform alloc] initWithFilename:fileName];
       [inform run];
-      return NO;
+      ASSIGN(_library, [inform library]);
+      NSDebugLLog(@"Record",  @"structures = %@", [[_library structureNames] description]);
+      return YES;
     }
 
   BOOL valid = [GdsZipedLibrary isValidDatabase: fileName error: outError];

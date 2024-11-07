@@ -6,7 +6,7 @@
 @interface GdsElement : NSObject
 {
   int           _keyNumber;
-  NSArray      *_xyArray;
+  NSArray      *_coords;
   GdsStructure *_structure;
   NSValue      *_boundingBox;
   NSArray      *_outlinePoints;
@@ -14,6 +14,8 @@
 - (id) init;
 - (void) dealloc;
 
+- (NSArray *) coords;
+- (void) setCoords: (NSArray *)points;
 - (NSArray *) vertices;
 - (NSArray *) outlinePoints;
 - (int) keyNumber;
