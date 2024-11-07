@@ -13,9 +13,9 @@ int (*linkRenaissanceIn)(int, const char **) = GSMarkupApplicationMain;
 #endif
 
 #ifdef GNUSTEP
-  #define MENU_RESOURCE @"Menu-GNUstep"
+#define MENU_RESOURCE @"Menu-GNUstep"
 #else
-  #define MENU_RESOURCE @"Menu-OSX"
+#define MENU_RESOURCE @"Menu-OSX"
 #endif
 
 int

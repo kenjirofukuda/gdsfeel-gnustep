@@ -3,8 +3,8 @@
 #import "GdsElement.h"
 
 @implementation NSArray (Elements)
-- (void) getPrimitivesOn: (NSMutableArray *) primitives
-            referencesOn: (NSMutableArray *) references
+- (void) getPrimitivesOn: (NSMutableArray *)primitives
+            referencesOn: (NSMutableArray *)references
 {
   NSEnumerator *iter;
   iter = [self objectEnumerator];

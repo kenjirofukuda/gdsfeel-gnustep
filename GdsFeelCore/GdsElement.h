@@ -5,11 +5,11 @@
 
 @interface GdsElement : NSObject
 {
-  int _keyNumber;
-  NSArray *_xyArray;
+  int           _keyNumber;
+  NSArray      *_xyArray;
   GdsStructure *_structure;
-  NSValue *_boundingBox;
-  NSArray *_outlinePoints;
+  NSValue      *_boundingBox;
+  NSArray      *_outlinePoints;
 }
 - (id) init;
 - (void) dealloc;
@@ -28,7 +28,6 @@
 - (NSRect) lookupBoundingBox;
 @end
 
-
 @interface GdsPrimitiveElement : GdsElement
 {
   int _layerNumber;
@@ -40,16 +39,14 @@
 - (void) debugLog;
 @end
 
-
 @interface GdsBoundary : GdsPrimitiveElement
 - (NSString *) typeName;
 @end
 
-
 @interface GdsPath : GdsPrimitiveElement
 {
   float _width;
-  int _pathType;
+  int   _pathType;
 }
 - (id) init;
 - (NSString *) typeName;
@@ -57,19 +54,18 @@
 - (int) pathType;
 @end
 
-
 @interface GdsReferenceElement : GdsElement
 {
-  NSString *_referenceName;
-  float _angle;
-  float _mag;
-  BOOL _reflected;
-  GdsStructure *_referenceStructure;
+  NSString          *_referenceName;
+  float              _angle;
+  float              _mag;
+  BOOL               _reflected;
+  GdsStructure      *_referenceStructure;
   NSAffineTransform *_transform;
 }
 - (id) init;
 - (NSString *) referenceName;
-- (void) setReferenceName: (NSString *) name;
+- (void) setReferenceName: (NSString *)name;
 - (float) angle;
 - (float) mag;
 - (BOOL) reflected;
@@ -85,10 +81,10 @@
 
 @interface GdsAref : GdsSref
 {
-  int _rowCount;
-  int _columnCount;
-  float _rowSpacing;
-  float _columnSpacing;
+  int      _rowCount;
+  int      _columnCount;
+  float    _rowSpacing;
+  float    _columnSpacing;
   NSArray *_offsetTransforms;
   NSArray *_transforms;
 }

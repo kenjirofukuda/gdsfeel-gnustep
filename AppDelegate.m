@@ -4,7 +4,7 @@
 #import "AppDelegate.h"
 
 @implementation AppDelegate
-- (BOOL) applicationShouldOpenUntitledFile:(NSApplication *)sender
+- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)sender
 {
   return NO;
 }
@@ -12,12 +12,12 @@
 /**
  * Invoked on notification that application will become active.
  */
-- (void)applicationWillFinishLaunching:(NSNotification *)aNotification
+- (void) applicationWillFinishLaunching: (NSNotification *)aNotification
 {
   NSDebugLog(@"#applicationWillFinishLaunching");
 }
 
- - (void) awakeFromGSMarkup
+- (void) awakeFromGSMarkup
 {
   NSDebugLog(@"#awakeFromGSMarkup");
 }

@@ -4,7 +4,7 @@
 #import "GdsLibraryDocument.h"
 #import "GdsFeelCore/GdsInform.h"
 
-@interface GdsLibraryDocument(Private)
+@interface GdsLibraryDocument (Private)
 - (void) logOutlet;
 @end
 
@@ -37,8 +37,8 @@
 
   if ([typeName isEqualToString: @"gds"])
     {
-      GdsInform *inform =
-        AUTORELEASE([[GdsInform alloc] initWithFilename: fileName]);
+      GdsInform *inform
+        = AUTORELEASE([[GdsInform alloc] initWithFilename: fileName]);
       [inform run];
       return NO;
     }
@@ -61,8 +61,8 @@
   NSDebugLog(@"#windowControllerDidLoadNib:");
   NSDebugLog(@"windowController = %@", windowController);
   NSDebugLog(@"window = %@", [windowController window]);
-  [[windowController window] setTitle: [NSString
-                                        stringWithFormat: @"GDSII: %@", [_library keyName]]];
+  [[windowController window]
+   setTitle: [NSString stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
   [structureListView setDataSource: self];
   [structureListView setDelegate: self];
@@ -71,8 +71,7 @@
 }
 @end
 
-
-@implementation GdsLibraryDocument(TableView)
+@implementation GdsLibraryDocument (TableView)
 - (NSInteger) numberOfRowsInTableView: (NSTableView *)aTableView
 {
   if (_library == nil)
@@ -94,14 +93,13 @@
 }
 @end
 
-
-@implementation GdsLibraryDocument(TableViewDelegate)
+@implementation GdsLibraryDocument (TableViewDelegate)
 - (void) tableViewSelectionDidChange: (NSNotification *)aNotification
 {
   NSDebugLog(@"#tableViewSelectionDidChange: %@", aNotification);
   NSString *structureName;
-  structureName = [[_library structureNames]
-                   objectAtIndex: [structureListView selectedRow]];
+  structureName =
+    [[_library structureNames] objectAtIndex: [structureListView selectedRow]];
   GdsStructure *structure;
   structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
@@ -109,8 +107,7 @@
 }
 @end
 
-
-@implementation GdsLibraryDocument(Private)
+@implementation GdsLibraryDocument (Private)
 - (void) logOutlet
 {
   NSDebugLog(@"infoBarView = %@", infoBarView);

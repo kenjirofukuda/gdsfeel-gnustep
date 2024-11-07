@@ -6,28 +6,28 @@
 #import "NSArray+Points.h"
 #import <math.h>
 
-
 @implementation GdsElement (XML)
-- (id) initWithXMLNode: (GSXMLNode *)xmlNode
-             structure: (GdsStructure *)structure
+- (id) initWithXMLNode: (GSXMLNode *)xmlNode structure: (GdsStructure *)structure
 {
   self = [super init];
   if (self)
     {
       ASSIGN(_structure, structure);
-      if (xmlNode != nil) {
-        [self loadFromXMLNode:xmlNode];
-      }
+      if (xmlNode != nil)
+        {
+          [self loadFromXMLNode: xmlNode];
+        }
       return self;
     }
   return nil;
 }
 
-static NSPoint pointFromXYstring(NSString *xyExpr)
+static NSPoint
+pointFromXYstring(NSString *xyExpr)
 {
   NSArray *items = [xyExpr componentsSeparatedByString: @" "];
-  float x = [[items objectAtIndex: 0] floatValue];
-  float y = [[items objectAtIndex: 1] floatValue];
+  float    x = [[items objectAtIndex: 0] floatValue];
+  float    y = [[items objectAtIndex: 1] floatValue];
   return NSMakePoint(x, y);
 }
 
@@ -67,7 +67,7 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 + (GdsElement *) elementFromXMLNode: (GSXMLNode *)xmlNode
                           structure: (GdsStructure *)structure
 {
-  NSString *typeName = [xmlNode objectForKey: @"type"];
+  NSString   *typeName = [xmlNode objectForKey: @"type"];
   GdsElement *newElement = nil;
   Class class = Nil;
   if ([typeName isEqualToString: @"boundary"])
@@ -88,15 +88,12 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
     }
   if (class != Nil)
     {
-      newElement = [[class alloc]
-                    initWithXMLNode: xmlNode structure: structure];
+      newElement = [[class alloc] initWithXMLNode: xmlNode structure: structure];
     }
   return newElement;
 }
 
-
 @end
-
 
 @implementation GdsPrimitiveElement (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode
@@ -107,8 +104,6 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 }
 @end
 
-
-
 @implementation GdsPath (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode
 {
@@ -118,14 +113,13 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 }
 @end
 
-
 @implementation GdsReferenceElement (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode
 {
   [super loadFromXMLNode: xmlNode];
   ASSIGN(_referenceName, [xmlNode objectForKey: @"sname"]);
   NSDictionary *attr = [xmlNode attributes];
-  NSString *valueStr;
+  NSString     *valueStr;
   valueStr = [attr valueForKey: @"mag"];
   if (valueStr == nil)
     {
@@ -162,7 +156,6 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
 }
 @end // GdsPrimitiveElement
 
-
 @implementation GdsAref (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode
 {
@@ -184,7 +177,7 @@ static NSPoint pointFromXYstring(NSString *xyExpr)
       return;
     }
   NSDictionary *attr = [ashapeNode attributes];
-  NSString *valueStr;
+  NSString     *valueStr;
   valueStr = [attr valueForKey: @"rows"];
   if (valueStr == nil)
     {

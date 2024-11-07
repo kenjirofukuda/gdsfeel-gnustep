@@ -5,13 +5,12 @@
 
 static NSString *InformInspect = @"InformInspect";
 
-@interface GdsInform(Private)
+@interface GdsInform (Private)
 - (void) _handleRecord: (NSData *)record;
 + (GdsElement *) _elementFromStreamRecordType: (int)recType;
 @end
 
-
-@interface NSData(GdsFeel)
+@interface NSData (GdsFeel)
 - (NSArray *) extractInt2;
 - (NSArray *) extractInt4;
 - (NSArray *) extractReal8;
@@ -40,7 +39,7 @@ GDSreadInt2(uint8_t *record)
 int
 GDSreadInt4(uint8_t *record)
 {
-  int i;
+  int          i;
   unsigned int result;
 
   for (i = 0, result = 0; i < 4; i++)
@@ -62,9 +61,9 @@ GDSreadInt4(uint8_t *record)
 double
 GDSreadReal8(uint8_t *record)
 {
-  int i, sign, exponent;
+  int                i, sign, exponent;
   unsigned long long mantissa_int;
-  double mantissa_float, result;
+  double             mantissa_float, result;
 
   sign = record[0] & 0x80;
   exponent = (record[0] & 0x7f) - 64;
@@ -75,8 +74,8 @@ GDSreadReal8(uint8_t *record)
       mantissa_int <<= 8;
       mantissa_int += record[i];
     }
-  mantissa_float = (double)mantissa_int / pow(2, 56);
-  result = mantissa_float * pow(16, (float)exponent);
+  mantissa_float = (double) mantissa_int / pow(2, 56);
+  result = mantissa_float * pow(16, (float) exponent);
   if (sign)
     result = -result;
 
@@ -87,7 +86,7 @@ char *
 GDSreadString(uint8_t *record, int len)
 {
   char *result, string[1024];
-  int i;
+  int   i;
 
   if (len > 1024)
     len = 1024;
@@ -102,7 +101,6 @@ GDSreadString(uint8_t *record, int len)
   result = strdup(string);
   return result;
 }
-
 
 @implementation GdsInform
 - (instancetype) initWithFilename: (NSString *)filename
@@ -149,7 +147,7 @@ GDSreadString(uint8_t *record, int len)
 }
 @end
 
-@implementation GdsInform(Private)
+@implementation GdsInform (Private)
 - (void) _handleRecord: (NSData *)record
 {
   uint8_t buff[2048];
@@ -160,7 +158,7 @@ GDSreadString(uint8_t *record, int len)
   NSData *body = [record subdataWithRange: NSMakeRange(2, [record length] - 2)];
   NSDebugLLog(InformInspect, @"body => %@", body);
 
-  NSArray *dataArray = [NSArray array];
+  NSArray  *dataArray = [NSArray array];
   NSString *dataString = @"";
   switch (buff[1])
     {
@@ -190,12 +188,13 @@ GDSreadString(uint8_t *record, int len)
     case BGNLIB:
       {
         ASSIGN(_library, [[GdsLibrary alloc] initWithPath: _filename]);
-        NSDebugLLog(@"Record",  @"BGNLIB: %@", dataArray);
+        NSDebugLLog(@"Record", @"BGNLIB: %@", dataArray);
       }
       break;
     case ENDLIB:
       {
-        NSAssert(_structure == nil, @"ENDLIB: Previouse structure not adding library");
+        NSAssert(_structure == nil,
+                 @"ENDLIB: Previouse structure not adding library");
       }
       break;
     case LIBNAME:
@@ -215,7 +214,8 @@ GDSreadString(uint8_t *record, int len)
       break;
     case BGNSTR:
       {
-        NSAssert(_structure == nil, @"BGNSTR: Previouse structure not adding library");
+        NSAssert(_structure == nil,
+                 @"BGNSTR: Previouse structure not adding library");
         ASSIGN(_structure, [[GdsStructure alloc] initWithLibrary: _library]);
         NSDebugLLog(@"Record", @"BGNSTR: %@", dataArray);
       }
@@ -297,12 +297,12 @@ GDSreadString(uint8_t *record, int len)
 
 @end
 
-@implementation NSData(GdsFeel)
+@implementation NSData (GdsFeel)
 
 - (NSArray *) extractInt2
 {
   NSMutableArray *result = [NSMutableArray array];
-  int len = [self length];
+  int             len = [self length];
   if (len < 2)
     {
       return result;
@@ -316,17 +316,17 @@ GDSreadString(uint8_t *record, int len)
   int nElements = (len / 2);
   for (int i = 0; i < nElements; i++)
     {
-      [result addObject: [NSNumber numberWithShort: (UInt16) GDSreadInt2(&record[i * 2])]];
+      [result addObject: [NSNumber numberWithShort: (UInt16) GDSreadInt2(
+                            &record[i * 2])]];
     }
 
   return result;
 }
 
-
 - (NSArray *) extractInt4
 {
   NSMutableArray *result = [NSMutableArray array];
-  int len = [self length];
+  int             len = [self length];
   if (len < 4)
     {
       return result;
@@ -340,16 +340,16 @@ GDSreadString(uint8_t *record, int len)
   int nElements = (len / 4);
   for (int i = 0; i < nElements; i++)
     {
-      [result addObject: [NSNumber numberWithLong: (UInt32) GDSreadInt4(&record[i * 4])]];
+      [result addObject: [NSNumber
+                          numberWithLong: (UInt32) GDSreadInt4(&record[i * 4])]];
     }
   return result;
 }
 
-
 - (NSArray *) extractReal8
 {
   NSMutableArray *result = [NSMutableArray array];
-  int len = [self length];
+  int             len = [self length];
   if (len < 8)
     {
       return result;
@@ -363,7 +363,8 @@ GDSreadString(uint8_t *record, int len)
   int nElements = (len / 8);
   for (int i = 0; i < nElements; i++)
     {
-      [result addObject: [NSNumber numberWithDouble: GDSreadReal8(&record[i * 8])]];
+      [result
+       addObject: [NSNumber numberWithDouble: GDSreadReal8(&record[i * 8])]];
     }
   return result;
 }
@@ -372,12 +373,10 @@ GDSreadString(uint8_t *record, int len)
 {
   uint8_t record[2048];
   [self getBytes: record];
-  char *c_str = GDSreadString(record, [self length]);
+  char     *c_str = GDSreadString(record, [self length]);
   NSString *result = [NSString stringWithCString: c_str];
   free(c_str);
   return result;
 }
 
 @end
-
-

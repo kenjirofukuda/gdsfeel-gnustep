@@ -5,10 +5,10 @@
 
 @interface GdsStructure : NSObject
 {
-  GdsLibrary *_library;
-  NSString *_name;
+  GdsLibrary     *_library;
+  NSString       *_name;
   NSMutableArray *_elements;
-  NSValue *_boundingBox;
+  NSValue        *_boundingBox;
 }
 - (id) initWithLibrary: (GdsLibrary *)library;
 - (void) dealloc;

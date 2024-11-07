@@ -5,16 +5,16 @@
 
 @interface GdsElementDrawer : NSObject
 {
-  GdsElement *_element;
+  GdsElement       *_element;
   GdsStructureView *_structureView;
 }
-- (id) initWithElement: (GdsElement *) element view: (GdsStructureView *) view;
+- (id) initWithElement: (GdsElement *)element view: (GdsStructureView *)view;
 - (void) dealloc;
 - (void) draw;
 - (void) fullDraw;
 - (NSColor *) frameColor;
 
-+ (Class) drawerClassForElement: (GdsElement *) element;
++ (Class) drawerClassForElement: (GdsElement *)element;
 @end
 
 @interface GdsPrimitiveDrawer : GdsElementDrawer

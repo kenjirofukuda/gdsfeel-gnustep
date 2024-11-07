@@ -4,15 +4,15 @@
 
 @interface GdsViewport : NSObject
 {
-  GdsStructure *_structure;
-  NSMutableArray *_transformStack;
-  NSSize _portSize;
-  NSPoint _center;
-  CGFloat _scale;
+  GdsStructure      *_structure;
+  NSMutableArray    *_transformStack;
+  NSSize             _portSize;
+  NSPoint            _center;
+  CGFloat            _scale;
   NSAffineTransform *_transform;
   NSAffineTransform *_basicTransform;
 }
-- (id) initWithStructure: (GdsStructure *) structure;
+- (id) initWithStructure: (GdsStructure *)structure;
 - (void) dealloc;
 
 - (NSAffineTransform *) transform;
@@ -22,15 +22,15 @@
 - (NSSize) portSize;
 - (CGFloat) scale;
 
-- (void) setPortSize: (NSSize) newSize;
-- (void) setCenter: (NSPoint) newCenter;
-- (void) setScale: (CGFloat) newScale;
-- (void) setBounds: (NSRect) worldBounds;
+- (void) setPortSize: (NSSize)newSize;
+- (void) setCenter: (NSPoint)newCenter;
+- (void) setScale: (CGFloat)newScale;
+- (void) setBounds: (NSRect)worldBounds;
 
-- (void) viewMoveFractionX: (CGFloat) aXfraction y: (CGFloat) aYfraction;
+- (void) viewMoveFractionX: (CGFloat)aXfraction y: (CGFloat)aYfraction;
 - (void) fit;
 
-- (void) pushTransform: (NSAffineTransform *) transform;
+- (void) pushTransform: (NSAffineTransform *)transform;
 - (NSAffineTransform *) popTransform;
 
 - (NSAffineTransform *) fittingTransform;

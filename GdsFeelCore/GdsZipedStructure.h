@@ -6,7 +6,6 @@
 {
   NSString *_directoryPath;
 }
-- initWithDirectoryPath: (NSString *)directoryPath
-                library: (GdsLibrary *)library;
+- initWithDirectoryPath: (NSString *)directoryPath library: (GdsLibrary *)library;
 @end
 // vim: filetype=objc ts=2 sw=2 expandtab

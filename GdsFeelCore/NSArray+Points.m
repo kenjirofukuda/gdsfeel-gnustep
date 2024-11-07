@@ -2,20 +2,20 @@
 #import <float.h>
 #import "NSArray+Points.h"
 
-static float BIGVAL = FLT_MAX / 2.0; 
+static float BIGVAL = FLT_MAX / 2.0;
 
 @implementation NSMutableArray (Points)
-- (void) addPointX: (CGFloat) x y: (CGFloat) y
+- (void) addPointX: (CGFloat)x y: (CGFloat)y
 {
   [self addPoint: NSMakePoint(x, y)];
 }
 
-- (void) addPoint: (NSPoint) point
+- (void) addPoint: (NSPoint)point
 {
-  [self addObject: [NSValue valueWithPoint: point]];  
+  [self addObject: [NSValue valueWithPoint: point]];
 }
 
-- (void) addNSPointPtr: (NSPoint *) points count: (int) countPoints
+- (void) addNSPointPtr: (NSPoint *)points count: (int)countPoints
 {
   int i;
   for (i = 0; i < countPoints; i++)
@@ -27,15 +27,15 @@ static float BIGVAL = FLT_MAX / 2.0;
 @end
 
 @implementation NSArray (Points)
-- (NSPoint *) asNSPointPtr: (int *) outCountPoints
+- (NSPoint *) asNSPointPtr: (int *)outCountPoints
 {
   NSPoint *points = malloc(sizeof(NSPoint) * [self count]);
   if (outCountPoints)
     *outCountPoints = [self count];
-  
+
   NSEnumerator *iter = [self objectEnumerator];
-  NSValue *v;
-  int i = 0;
+  NSValue      *v;
+  int           i = 0;
   while ((v = [iter nextObject]) != nil)
     {
       NSPoint xy = [v pointValue];
@@ -48,9 +48,10 @@ static float BIGVAL = FLT_MAX / 2.0;
 - (NSRect) lookupBoundingBox
 {
   float xmin, xmax, ymin, ymax;
-  xmin = ymin = BIGVAL; xmax = ymax = -BIGVAL;
+  xmin = ymin = BIGVAL;
+  xmax = ymax = -BIGVAL;
   NSEnumerator *iter = [self objectEnumerator];
-  NSValue *v;
+  NSValue      *v;
   while ((v = [iter nextObject]) != nil)
     {
       NSPoint xy = [v pointValue];
@@ -66,11 +67,11 @@ static float BIGVAL = FLT_MAX / 2.0;
   return NSMakeRect(xmin, ymin, xmax - xmin, ymax - ymin);
 }
 
-- (NSArray *) transformedPoints: (NSAffineTransform *) transform
+- (NSArray *) transformedPoints: (NSAffineTransform *)transform
 {
   NSMutableArray *array = [NSMutableArray new];
-  NSEnumerator *iter = [self objectEnumerator];
-  NSValue *v;
+  NSEnumerator   *iter = [self objectEnumerator];
+  NSValue        *v;
   while ((v = [iter nextObject]) != nil)
     {
       NSPoint xy = [v pointValue];
@@ -79,22 +80,21 @@ static float BIGVAL = FLT_MAX / 2.0;
   return [NSArray arrayWithArray: array];
 }
 
-+ (NSArray *) pointsFromNSPointPtr: (NSPoint *) points 
-                             count: (int) countPoints
++ (NSArray *) pointsFromNSPointPtr: (NSPoint *)points count: (int)countPoints
 {
   NSMutableArray *array = [NSMutableArray new];
   [array addNSPointPtr: points count: countPoints];
   return [NSArray arrayWithArray: array];
 }
 
-+ (NSArray *) pointsFromNSRect: (NSRect) rect
++ (NSArray *) pointsFromNSRect: (NSRect)rect
 {
   NSMutableArray *array = [NSMutableArray new];
   [array addPoint: NSMakePoint(NSMinX(rect), NSMinY(rect))];
   [array addPoint: NSMakePoint(NSMinX(rect), NSMaxY(rect))];
   [array addPoint: NSMakePoint(NSMaxX(rect), NSMaxY(rect))];
   [array addPoint: NSMakePoint(NSMaxX(rect), NSMinY(rect))];
-  return [NSArray arrayWithArray: array];  
+  return [NSArray arrayWithArray: array];
 }
 
 @end

@@ -8,7 +8,7 @@
 @end
 
 @implementation GdsViewport
-- (id) initWithStructure: (GdsStructure *) structure
+- (id) initWithStructure: (GdsStructure *)structure
 {
   self = [super init];
   if (self != nil)
@@ -50,7 +50,7 @@
   return _portSize;
 }
 
-- (void) setPortSize: (NSSize) newSize
+- (void) setPortSize: (NSSize)newSize
 {
   _portSize = newSize;
   [self _damageTransform];
@@ -61,7 +61,7 @@
   return _center;
 }
 
-- (void) setCenter: (NSPoint) newCenter
+- (void) setCenter: (NSPoint)newCenter
 {
   if (NSEqualPoints(_center, newCenter))
     return;
@@ -74,7 +74,7 @@
   return _scale;
 }
 
-- (void) setScale: (CGFloat) newScale
+- (void) setScale: (CGFloat)newScale
 {
   if (_scale == newScale)
     return;
@@ -82,11 +82,11 @@
   [self _damageTransform];
 }
 
-- (void) setBounds: (NSRect) worldBounds
+- (void) setBounds: (NSRect)worldBounds
 {
-  double hRatio = _portSize.width / NSWidth(worldBounds);
-  double vRatio = _portSize.height / NSHeight(worldBounds);
-  double ratio = hRatio < vRatio ? hRatio : vRatio;
+  double  hRatio = _portSize.width / NSWidth(worldBounds);
+  double  vRatio = _portSize.height / NSHeight(worldBounds);
+  double  ratio = hRatio < vRatio ? hRatio : vRatio;
   NSPoint newCenter = NSMakePoint(NSMidX(worldBounds), NSMidY(worldBounds));
   _center = newCenter;
   _scale = (CGFloat) ratio;
@@ -95,11 +95,12 @@
 
 - (NSRect) bounds
 {
-  NSRect pixelBounds;
-  NSRect viewBounds;
+  NSRect             pixelBounds;
+  NSRect             viewBounds;
   NSAffineTransform *inverseTransform;
   pixelBounds = NSMakeRect(0.0, 0.0, _portSize.width, _portSize.height);
-  inverseTransform = [[NSAffineTransform alloc] initWithTransform: [self transform]];
+  inverseTransform =
+    [[NSAffineTransform alloc] initWithTransform: [self transform]];
   [inverseTransform invert];
   viewBounds.origin = [inverseTransform transformPoint: pixelBounds.origin];
   viewBounds.size = [inverseTransform transformSize: pixelBounds.size];
@@ -107,9 +108,9 @@
   return viewBounds;
 }
 
--(void) viewMoveFractionX: (CGFloat) aXfraction y: (CGFloat) aYfraction
+- (void) viewMoveFractionX: (CGFloat)aXfraction y: (CGFloat)aYfraction
 {
-  NSRect viewBounds;
+  NSRect  viewBounds;
   CGFloat xDelta, yDelta;
   NSPoint newCenter;
 
@@ -127,7 +128,7 @@
   [self setBounds: [_structure boundingBox]];
 }
 
-- (void) pushTransform: (NSAffineTransform *) transform
+- (void) pushTransform: (NSAffineTransform *)transform
 {
   [_transformStack addObject: transform];
   DESTROY(_transform);
@@ -174,7 +175,7 @@
     return tx;
   [tx translateXBy: _portSize.width / 2.0 yBy: _portSize.height / 2.0];
   [tx scaleBy: _scale];
-  [tx translateXBy: -_center.x yBy: -_center.y];    
+  [tx translateXBy: -_center.x yBy: -_center.y];
   return tx;
 }
 
@@ -185,14 +186,14 @@
     return tx;
   CGFloat vw = _portSize.width;
   CGFloat vh = _portSize.height;
-  NSRect modelBounds = [_structure boundingBox];
-  double hRatio = vw / NSWidth(modelBounds);
-  double vRatio = vh / NSHeight(modelBounds);
-  double ratio = hRatio < vRatio ? hRatio : vRatio;
+  NSRect  modelBounds = [_structure boundingBox];
+  double  hRatio = vw / NSWidth(modelBounds);
+  double  vRatio = vh / NSHeight(modelBounds);
+  double  ratio = hRatio < vRatio ? hRatio : vRatio;
   [tx translateXBy: vw / 2.0 yBy: vh / 2.0];
   [tx scaleBy: ratio];
   [tx scaleBy: 0.98];
-  [tx translateXBy: -NSMidX(modelBounds) yBy: -NSMidY(modelBounds)];  
+  [tx translateXBy: -NSMidX(modelBounds) yBy: -NSMidY(modelBounds)];
   return tx;
 }
 @end

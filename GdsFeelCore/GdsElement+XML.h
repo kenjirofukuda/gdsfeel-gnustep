@@ -6,8 +6,7 @@
 @class GdsStructure;
 
 @interface GdsElement (XML)
-- (id) initWithXMLNode: (GSXMLNode *)xmlNode
-             structure: (GdsStructure *)structure;
+- (id) initWithXMLNode: (GSXMLNode *)xmlNode structure: (GdsStructure *)structure;
 
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode;
 + (GdsElement *) elementFromXMLNode: (GSXMLNode *)xmlNode
@@ -15,16 +14,13 @@
 
 @end
 
-
 @interface GdsPrimitiveElement (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode;
 @end
 
-
 @interface GdsPath (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode;
 @end
-
 
 @interface GdsReferenceElement (XML)
 - (void) loadFromXMLNode: (GSXMLNode *)xmlNode;

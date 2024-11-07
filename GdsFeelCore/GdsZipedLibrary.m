@@ -4,8 +4,7 @@
 #import "GdsLayer.h"
 #import "GdsZipedStructure.h"
 
-
-@interface GdsZipedLibrary(Private)
+@interface GdsZipedLibrary (Private)
 - (NSString *) pathToReaderMarker;
 - (NSString *) pathToLayersInformation;
 - (void) touchReaderMarker;
@@ -15,7 +14,6 @@
 - (NSString *) directoryPathForStructureName: (NSString *)structureName;
 - (void) loadStructures;
 @end
-
 
 @implementation GdsZipedLibrary
 - (id) initWithPath: (NSString *)fileName
@@ -29,13 +27,11 @@
   return self;
 }
 
-
 - (void) dealloc
 {
   RELEASE(_archiver);
   [super dealloc];
 }
-
 
 - (BOOL) isOpen
 {
@@ -43,18 +39,16 @@
   return exists;
 }
 
-
 - (GdsLayers *) layers
 {
   if (_layers == nil)
     {
       ASSIGN(_layers,
-             [[GdsLayers alloc]
-              initWithPath: [self pathToLayersInformation] library: self]);
+             [[GdsLayers alloc] initWithPath: [self pathToLayersInformation]
+                                     library: self]);
     }
   return _layers;
 }
-
 
 - (void) debugLog
 {
@@ -63,12 +57,11 @@
   NSDebugLog(@"pathToExtract = %@", [self pathToExtract]);
 }
 
-
 - (NSString *) pathToExtract
 {
-  return [NSString pathWithComponents:
-                   [NSArray arrayWithObjects:
-                    _folderPath, @".editlibs", [self localName], nil]];
+  return [NSString
+          pathWithComponents: [NSArray arrayWithObjects: _folderPath, @".editlibs",
+                               [self localName], nil]];
 }
 
 - (void) openForReading
@@ -79,19 +72,20 @@
       return;
     }
 #ifdef __MINGW__
-  BOOL ok = [[NSFileManager defaultManager]
-             createDirectoryAtPath: [self pathToExtract] attributes: nil];
+  BOOL ok =
+    [[NSFileManager defaultManager] createDirectoryAtPath: [self pathToExtract]
+                                               attributes: nil];
 #else
   NSMutableDictionary *attr;
   attr = [[NSMutableDictionary alloc] init];
   [attr setValue: [NSNumber numberWithShort: 0755] forKey: NSFilePosixPermissions];
 
   NSError *theError = nil;
-  BOOL ok = [[NSFileManager defaultManager]
-                   createDirectoryAtPath: [self pathToExtract]
-             withIntermediateDirectories: YES
-                              attributes: attr
-                                   error: &theError];
+  BOOL     ok =
+    [[NSFileManager defaultManager] createDirectoryAtPath: [self pathToExtract]
+                              withIntermediateDirectories: YES
+                                               attributes: attr
+                                                    error: &theError];
   if (theError)
     {
       NSDebugLog(@"%@", [theError localizedDescription]);
@@ -115,17 +109,16 @@
 {
   if ([self hasReaderMarker] == NO)
     return;
-  BOOL result =  [[NSFileManager defaultManager]
-                  removeFileAtPath: [self pathToExtract]
-                           handler: nil];
+  BOOL result =
+    [[NSFileManager defaultManager] removeFileAtPath: [self pathToExtract]
+                                             handler: nil];
   if (result == NO)
     {
       NSWarnLog(@"Can't remove %@", [self pathToExtract]);
     }
 }
 
-+ (BOOL) isValidDatabase: (NSString *)fileName
-                   error: (NSError **)outError
++ (BOOL) isValidDatabase: (NSString *)fileName error: (NSError **)outError
 {
   BOOL enabled = [[GdsZipArchiver defaultArchiver] isZipArchiverEnabled];
   if (enabled == NO)
@@ -133,21 +126,20 @@
   BOOL result = [[GdsZipArchiver defaultArchiver] isZipFile: fileName];
   if (result == NO)
     {
-      *outError =
-        [NSError errorWithDomain: GdsLibraryErrorDomain
-                            code: -1 // Oh NO
-                        userInfo: [NSDictionary
-        dictionaryWithObjectsAndKeys:
-                            _(@"Invalid GdsFeel database library format"),
-                            NSLocalizedDescriptionKey,
-                            nil]];
+      *outError = [NSError
+                   errorWithDomain: GdsLibraryErrorDomain
+                              code: -1 // Oh NO
+                          userInfo: [NSDictionary
+                                dictionaryWithObjectsAndKeys:
+                              _(@"Invalid GdsFeel database library format"),
+                              NSLocalizedDescriptionKey, nil]];
     }
   return result;
 }
 
 @end
 
-@implementation GdsZipedLibrary(Private)
+@implementation GdsZipedLibrary (Private)
 - (void) touchReaderMarker
 {
   [@"touch" writeToFile: [self pathToReaderMarker] atomically: YES];
@@ -156,32 +148,34 @@
 - (NSString *) pathToReaderMarker
 {
   NSString *pathToMarker;
-  pathToMarker = [NSString pathWithComponents:
-                           [NSArray arrayWithObjects: [self pathToExtract], @"GNUstep.reader", nil]];
+  pathToMarker = [NSString
+                  pathWithComponents: [NSArray arrayWithObjects: [self pathToExtract],
+                                       @"GNUstep.reader", nil]];
   return pathToMarker;
 }
 
 - (NSString *) pathToLayersInformation
 {
   NSString *pathToLayers;
-  pathToLayers = [NSString pathWithComponents:
-                           [NSArray arrayWithObjects: [self pathToExtract], @"layers.xml", nil]];
+  pathToLayers =
+    [NSString pathWithComponents: [NSArray arrayWithObjects: [self pathToExtract],
+                                   @"layers.xml", nil]];
   return pathToLayers;
 }
 
 - (BOOL) isDirectory: (NSString *)fileName
 {
   BOOL exists, isDir;
-  exists = [[NSFileManager defaultManager]
-            fileExistsAtPath: fileName isDirectory: &isDir];
+  exists = [[NSFileManager defaultManager] fileExistsAtPath: fileName
+                                                isDirectory: &isDir];
   return exists == YES && isDir == YES;
 }
 
 - (BOOL) isFile: (NSString *)fileName
 {
   BOOL exists, isDir;
-  exists = [[NSFileManager defaultManager]
-            fileExistsAtPath: fileName isDirectory: &isDir];
+  exists = [[NSFileManager defaultManager] fileExistsAtPath: fileName
+                                                isDirectory: &isDir];
   return exists == YES && isDir == NO;
 }
 
@@ -193,9 +187,12 @@
 - (NSString *) directoryPathForStructureName: (NSString *)structureName
 {
   NSString *fullPath;
-  fullPath = [NSString pathWithComponents:
-                       [NSArray arrayWithObjects: [self pathToExtract],
-                        [structureName stringByAppendingPathExtension: @"structure"], nil]];
+  fullPath = [NSString
+              pathWithComponents:
+                [NSArray arrayWithObjects: [self pathToExtract],
+               [structureName
+                  stringByAppendingPathExtension: @"structure"],
+               nil]];
   return fullPath;
 }
 
@@ -208,24 +205,26 @@
   [self openForReading];
   NSArray *allNames = [[NSFileManager defaultManager]
                        directoryContentsAtPath: [self pathToExtract]];
-  NSArray *sortedNames = [allNames sortedArrayUsingSelector: @selector(compare:)];
-  //NSMutableArray *names = [[NSMutableArray alloc] init];
+  NSArray *sortedNames =
+    [allNames sortedArrayUsingSelector: @selector(compare:)];
+  // NSMutableArray *names = [[NSMutableArray alloc] init];
   NSEnumerator *iter = [sortedNames objectEnumerator];
-  NSString *name;
+  NSString     *name;
   while ((name = [iter nextObject]) != nil)
     {
       NSString *fullPath;
-      fullPath = [NSString pathWithComponents:
-                           [NSArray arrayWithObjects: [self pathToExtract], name, nil]];
+      fullPath = [NSString
+                  pathWithComponents: [NSArray
+                                         arrayWithObjects: [self pathToExtract], name, nil]];
       if ([self isDirectory: fullPath] == NO)
         continue;
       if ([[name pathExtension] isEqualToString: @"structure"] == YES)
         {
-          //NSString *keyName = [name stringByDeletingPathExtension];
+          // NSString *keyName = [name stringByDeletingPathExtension];
           GdsStructure *newStructure;
-          newStructure = [[GdsZipedStructure alloc]
-                          initWithDirectoryPath: fullPath
-                                        library: self];
+          newStructure =
+            [[GdsZipedStructure alloc] initWithDirectoryPath: fullPath
+                                                     library: self];
           [self addStructure: newStructure];
           [newStructure debugLog];
         }
@@ -236,8 +235,8 @@
 {
   [self loadStructures];
   NSMutableArray *names = [[NSMutableArray alloc] init];
-  NSEnumerator *iter = [_structures objectEnumerator];
-  GdsStructure *structure;
+  NSEnumerator   *iter = [_structures objectEnumerator];
+  GdsStructure   *structure;
   while ((structure = [iter nextObject]) != nil)
     {
       [names addObject: [structure keyName]];

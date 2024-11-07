@@ -16,7 +16,6 @@
   return self;
 }
 
-
 - (void) dealloc
 {
   RELEASE(_library);
@@ -25,7 +24,6 @@
   RELEASE(_name);
   [super dealloc];
 }
-
 
 - (GdsLibrary *) library
 {
@@ -37,7 +35,6 @@
   ASSIGN(_library, library);
 }
 
-
 - (NSString *) name
 {
   if (_name == nil)
@@ -47,12 +44,10 @@
   return _name;
 }
 
-
 - (void) setName: (NSString *)name
 {
   ASSIGNCOPY(_name, name);
 }
-
 
 - (NSString *) keyName
 {
@@ -79,31 +74,27 @@
   return [_boundingBox rectValue];
 }
 
-
-- (void) addElement:(GdsElement *) newElement
+- (void) addElement: (GdsElement *)newElement
 {
   NSDebugLog(@"%@", @"addElement");
   [_elements addObject: newElement];
   [newElement setStructure: self];
 }
 
-
 - (void) loadElements
 {
   // must be overridden
 }
-
 
 - (void) debugLog
 {
   NSDebugLog(@"elements = %@", [self elements]);
 }
 
-
 - (NSRect) lookupBoundingBox
 {
-  NSEnumerator *iter = [[self elements] objectEnumerator];
-  GdsElement *element;
+  NSEnumerator   *iter = [[self elements] objectEnumerator];
+  GdsElement     *element;
   NSMutableArray *points = [NSMutableArray new];
   while ((element = [iter nextObject]) != nil)
     {
@@ -115,6 +106,5 @@
 }
 
 @end
-
 
 // vim: ts=2 sw=2 expandtab

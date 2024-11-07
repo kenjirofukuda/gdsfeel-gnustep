@@ -6,11 +6,10 @@
 
 NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
-@interface GdsLibrary(Private)
+@interface GdsLibrary (Private)
 - (NSArray *) lookupStructureNames;
 - (void) loadStructures;
 @end
-
 
 @implementation GdsLibrary
 - (id) initWithPath: (NSString *)fileName
@@ -29,12 +28,10 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   return self;
 }
 
-
 - (id) init
 {
   return [self initWithPath: @""];
 }
-
 
 - (void) dealloc
 {
@@ -45,7 +42,6 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   RELEASE(_layers);
   [super dealloc];
 }
-
 
 - (NSString *) name
 {
@@ -76,7 +72,6 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 {
   _meterUnit = unit;
 }
-
 
 - (NSString *) localName
 {
@@ -130,8 +125,7 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 {
   if (_layers == nil)
     {
-      ASSIGN(_layers,
-             [[GdsLayers alloc] init]);
+      ASSIGN(_layers, [[GdsLayers alloc] init]);
     }
   return _layers;
 }
@@ -155,6 +149,5 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 }
 
 @end
-
 
 // vim: ts=2 sw=2 expandtab

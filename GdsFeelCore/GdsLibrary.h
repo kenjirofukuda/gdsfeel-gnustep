@@ -10,15 +10,15 @@ extern NSString *const GdsLibraryErrorDomain;
 
 @interface GdsLibrary : NSObject
 {
-  double _userUnit;
-  double _meterUnit;
-  NSString *_path;
-  NSString *_keyName;
-  NSString *_name;
-  NSMutableArray *_structures;
+  double               _userUnit;
+  double               _meterUnit;
+  NSString            *_path;
+  NSString            *_keyName;
+  NSString            *_name;
+  NSMutableArray      *_structures;
   NSMutableDictionary *_structureMap;
-  NSArray *_structureNames;
-  GdsLayers *_layers;
+  NSArray             *_structureNames;
+  GdsLayers           *_layers;
 }
 
 - (id) init;

@@ -5,7 +5,7 @@
 #import "GdsLibrary.h"
 
 @interface GdsLayer (Private)
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode;
+- (void) loadFromXMLNode: (GSXMLNode *)xmlNode;
 @end
 
 @interface GdsLayers (Private)
@@ -13,7 +13,7 @@
 @end
 
 @implementation GdsLayer
-- (id) initWithXMLNode: (GSXMLNode*) node
+- (id) initWithXMLNode: (GSXMLNode *)node
 {
   self = [super init];
   if (self)
@@ -26,7 +26,6 @@
     }
   return self;
 }
-
 
 - (void) dealloc
 {
@@ -56,7 +55,7 @@
 @end
 
 @implementation GdsLayers
-- (id) initWithPath: (NSString *) path library: (GdsLibrary *) library
+- (id) initWithPath: (NSString *)path library: (GdsLibrary *)library
 {
   self = [super init];
   if (self)
@@ -76,7 +75,7 @@
   [super dealloc];
 }
 
-- (GdsLayer *) layerAtNumber: (int) number
+- (GdsLayer *) layerAtNumber: (int)number
 {
   NSString *key = [[NSNumber numberWithInt: number] stringValue];
   if (_layerMap == nil)
@@ -84,17 +83,17 @@
       _layerMap = [[NSMutableDictionary alloc] init];
       [self loadLayers];
     }
-  return [_layerMap valueForKey: key]; 
+  return [_layerMap valueForKey: key];
 }
 
 @end
 
 @implementation GdsLayer (Private)
-- (void) loadFromXMLNode: (GSXMLNode *) xmlNode
+- (void) loadFromXMLNode: (GSXMLNode *)xmlNode
 {
-  _visible = [[xmlNode objectForKey: @"visible"] boolValue]; 
-  _selectable = [[xmlNode objectForKey: @"selectable"] boolValue]; 
-  _number = [[xmlNode objectForKey: @"gdsno"] intValue]; 
+  _visible = [[xmlNode objectForKey: @"visible"] boolValue];
+  _selectable = [[xmlNode objectForKey: @"selectable"] boolValue];
+  _number = [[xmlNode objectForKey: @"gdsno"] intValue];
   GSXMLNode *node = [xmlNode firstChildElement];
   GSXMLNode *colorNode = nil;
   while (node != nil)
@@ -103,7 +102,7 @@
         {
           colorNode = node;
           break;
-        } 
+        }
       node = [node nextElement];
     }
   if (colorNode)
@@ -115,7 +114,7 @@
       a = [[colorNode objectForKey: @"a"] floatValue];
       ASSIGN(_color, [NSColor colorWithDeviceRed: r green: g blue: b alpha: a]);
     }
- }
+}
 @end
 
 @implementation GdsLayers (Private)
@@ -148,8 +147,9 @@
       newLayer = [[GdsLayer alloc] initWithXMLNode: node];
       if (newLayer != nil)
         {
-          [_layerMap setValue: newLayer 
-                       forKey: [[NSNumber numberWithInt: [newLayer number]] stringValue]];
+          [_layerMap
+           setValue: newLayer
+             forKey: [[NSNumber numberWithInt: [newLayer number]] stringValue]];
         }
       node = [node nextElement];
     }

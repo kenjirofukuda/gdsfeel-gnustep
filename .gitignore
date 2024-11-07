@@ -5,3 +5,4 @@
 obj/
 *.app
 .ccls-cache
+*.orig

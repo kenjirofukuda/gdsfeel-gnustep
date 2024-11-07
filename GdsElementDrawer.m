@@ -7,14 +7,12 @@
 @interface GdsElementDrawer (Private)
 - (GdsViewport *) viewport;
 - (void) strokeOutline;
-- (void) strokePoints: (NSArray *) points;
-- (void) strokePoints: (NSArray *) points
-            transform: (NSAffineTransform *) transform;
+- (void) strokePoints: (NSArray *)points;
+- (void) strokePoints: (NSArray *)points transform: (NSAffineTransform *)transform;
 @end
 
-
 @implementation GdsElementDrawer
-- (id) initWithElement: (GdsElement *) element view: (GdsStructureView *) view
+- (id) initWithElement: (GdsElement *)element view: (GdsStructureView *)view
 {
   self = [super init];
   if (self != nil)
@@ -22,7 +20,7 @@
       ASSIGN(_element, element);
       ASSIGN(_structureView, view);
     }
-  return self;  
+  return self;
 }
 
 - (void) dealloc
@@ -46,11 +44,11 @@
 - (NSColor *) frameColor
 {
   GdsPrimitiveElement *primitive = (GdsPrimitiveElement *) _element;
-  return [[[[[primitive structure] library] layers] 
-      layerAtNumber: [primitive layerNumber]] color];
+  return [[[[[primitive structure] library] layers]
+                                    layerAtNumber: [primitive layerNumber]] color];
 }
 
-+ (Class) drawerClassForElement: (GdsElement *) element
++ (Class) drawerClassForElement: (GdsElement *)element
 {
   Class class = [GdsElementDrawer class];
   NSString *className = NSStringFromClass([element class]);
@@ -75,21 +73,20 @@
 
 - (void) strokeOutline
 {
-  [self strokePoints: [_element outlinePoints] 
+  [self strokePoints: [_element outlinePoints]
            transform: [[self viewport] transform]];
 }
 
-- (void) strokePoints: (NSArray *) points
+- (void) strokePoints: (NSArray *)points
 {
   [self strokePoints: points transform: nil];
 }
 
-- (void) strokePoints: (NSArray *) points 
-            transform: (NSAffineTransform *) transform
+- (void) strokePoints: (NSArray *)points transform: (NSAffineTransform *)transform
 {
   NSBezierPath *path = [NSBezierPath bezierPath];
-  int i;
-  for (i = 0; i < [points count]; i++) 
+  int           i;
+  for (i = 0; i < [points count]; i++)
     {
       NSPoint p = [[points objectAtIndex: i] pointValue];
       if (i == 0)
@@ -116,7 +113,7 @@
 @implementation GdsReferenceDrawer
 - (void) draw
 {
-  GdsStructure *refStructure;
+  GdsStructure        *refStructure;
   GdsReferenceElement *element;
   element = (GdsReferenceElement *) _element;
   refStructure = [element referenceStructure];
@@ -124,7 +121,7 @@
     {
       return;
     }
-  if ([_structureView inLiveResize]) 
+  if ([_structureView inLiveResize])
     {
       [super draw];
     }
@@ -150,7 +147,7 @@
 - (void) draw
 {
   GdsStructure *refStructure;
-  GdsAref *element;
+  GdsAref      *element;
   element = (GdsAref *) _element;
   refStructure = [element referenceStructure];
   if (refStructure == nil)
@@ -158,23 +155,23 @@
       return;
     }
   NSAffineTransform *tx;
-  NSEnumerator *iter;
+  NSEnumerator      *iter;
 
-  if ([_structureView inLiveResize]) 
+  if ([_structureView inLiveResize])
     {
       [super draw];
     }
   else
     {
       [[_structureView viewport] pushTransform: [element transform]];
-      iter = [[element offsetTransforms] objectEnumerator]; 
+      iter = [[element offsetTransforms] objectEnumerator];
       while ((tx = [iter nextObject]) != nil)
         {
           [[_structureView viewport] pushTransform: tx];
           [_structureView drawElements: [refStructure elements]];
-          (void) [[_structureView viewport] popTransform];     
+          (void) [[_structureView viewport] popTransform];
         }
-      (void) [[_structureView viewport] popTransform];     
+      (void) [[_structureView viewport] popTransform];
     }
 }
 @end

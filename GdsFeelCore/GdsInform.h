@@ -7,13 +7,13 @@
 
 @interface GdsInform : NSObject
 {
-  NSString *_filename;
+  NSString     *_filename;
   NSFileHandle *_fh;
-  GdsLibrary *_library;
+  GdsLibrary   *_library;
   GdsStructure *_structure;
-  GdsElement *_element;
+  GdsElement   *_element;
 }
 
-- (instancetype) initWithFilename: (NSString*)filename;
+- (instancetype) initWithFilename: (NSString *)filename;
 - (void) run;
 @end

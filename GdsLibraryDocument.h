@@ -8,11 +8,11 @@
 @interface GdsLibraryDocument : GSMarkupDocument
 {
   GdsZipedLibrary *_library;
-  NSArray *_structureNames;
+  NSArray         *_structureNames;
 
   IBOutlet GdsStructureView *structureView;
-  IBOutlet id structureListView;
-  IBOutlet id infoBarView;
+  IBOutlet id                structureListView;
+  IBOutlet id                infoBarView;
 }
 
 - (void) dealloc;

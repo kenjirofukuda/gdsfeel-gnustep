@@ -7,12 +7,12 @@
 
 @interface GdsLayer : NSObject
 {
-  BOOL _selectable;
-  BOOL _visible;
-  int _number;
+  BOOL     _selectable;
+  BOOL     _visible;
+  int      _number;
   NSColor *_color;
 }
-- (id) initWithXMLNode: (GSXMLNode *) node;
+- (id) initWithXMLNode: (GSXMLNode *)node;
 - (BOOL) selectable;
 - (BOOL) visible;
 - (NSColor *) color;
@@ -21,12 +21,12 @@
 
 @interface GdsLayers : NSObject
 {
-  NSString *_path;
-  GdsLibrary *_library;
+  NSString            *_path;
+  GdsLibrary          *_library;
   NSMutableDictionary *_layerMap;
 }
-- (id) initWithPath: (NSString *) path library: (GdsLibrary *) library;
-- (GdsLayer *) layerAtNumber: (int) number;
+- (id) initWithPath: (NSString *)path library: (GdsLibrary *)library;
+- (GdsLayer *) layerAtNumber: (int)number;
 @end
 
 // vim: filetype=objc ts=2 sw=2 expandtab

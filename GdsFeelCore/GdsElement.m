@@ -8,7 +8,7 @@
 
 static int sKeyNumber = 0;
 
-@interface GdsElement(Private)
+@interface GdsElement (Private)
 - (void) debugKeyValueLog;
 @end
 
@@ -102,7 +102,7 @@ static int sKeyNumber = 0;
 }
 @end
 
-@implementation GdsElement(Private)
+@implementation GdsElement (Private)
 - (void) debugKeyValueLog
 {
   NSDebugLog(@"       type = %@", [self valueForKey: @"typeName"]);
@@ -111,7 +111,6 @@ static int sKeyNumber = 0;
 }
 
 @end
-
 
 @implementation GdsPrimitiveElement
 - (id) init
@@ -146,7 +145,6 @@ static int sKeyNumber = 0;
 }
 @end
 
-
 @implementation GdsBoundary
 - (NSString *) typeName
 {
@@ -160,7 +158,7 @@ getAngle(CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2)
   double angle;
 
   if (x1 == x2)
-    angle =  M_PI_2 * ((y2 > y1) ? 1 : -1);
+    angle = M_PI_2 * ((y2 > y1) ? 1 : -1);
   else
     {
       angle = atan(fabs(y2 - y1) / fabs(x2 - x1));
@@ -187,7 +185,7 @@ getAngle(CGFloat x1, CGFloat y1, CGFloat x2, CGFloat y2)
 static NSPoint
 getDeltaXY(CGFloat hw, NSPoint p1, NSPoint p2, NSPoint p3)
 {
-  double alpha, beta, theta, r;
+  double  alpha, beta, theta, r;
   NSPoint pnt;
   alpha = getAngle(p1.x, p1.y, p2.x, p2.y);
   beta = getAngle(p2.x, p2.y, p3.x, p3.y);
@@ -206,7 +204,7 @@ getDeltaXY(CGFloat hw, NSPoint p1, NSPoint p2, NSPoint p3)
 static NSPoint
 getEndDeltaXY(CGFloat hw, NSPoint p1, NSPoint p2)
 {
-  double alpha, theta, r;
+  double  alpha, theta, r;
   NSPoint pnt;
   alpha = getAngle(p1.x, p1.y, p2.x, p2.y);
   theta = alpha;
@@ -216,12 +214,13 @@ getEndDeltaXY(CGFloat hw, NSPoint p1, NSPoint p2)
   return pnt;
 }
 
-NSArray *PathToBoundary(GdsPath *path)
+NSArray *
+PathToBoundary(GdsPath *path)
 {
-  CGFloat hw = [path width] / 2.0;
-  int i, numpoints = [[path vertices] count];
+  CGFloat  hw = [path width] / 2.0;
+  int      i, numpoints = [[path vertices] count];
   NSPoint *points, deltaxy;
-  int count;
+  int      count;
 
   if (numpoints < 2)
     {
@@ -234,7 +233,7 @@ NSArray *PathToBoundary(GdsPath *path)
 
   deltaxy = getEndDeltaXY(hw, path_points[0], path_points[1]);
 
-  if ([path pathType] == 0) //BUTT_END
+  if ([path pathType] == 0) // BUTT_END
     {
       points[0].x = path_points[0].x + deltaxy.x;
       points[0].y = path_points[0].y + deltaxy.y;
@@ -255,16 +254,16 @@ NSArray *PathToBoundary(GdsPath *path)
 
   for (i = 1; i < numpoints - 1; i++)
     {
-      deltaxy = getDeltaXY(hw, path_points[i - 1],
-                           path_points[i], path_points[i + 1]);
+      deltaxy = getDeltaXY(hw, path_points[i - 1], path_points[i],
+                           path_points[i + 1]);
       points[i].x = path_points[i].x + deltaxy.x;
       points[i].y = path_points[i].y + deltaxy.y;
       points[2 * numpoints - i - 1].x = path_points[i].x - deltaxy.x;
       points[2 * numpoints - i - 1].y = path_points[i].y - deltaxy.y;
     }
 
-  deltaxy = getEndDeltaXY(hw, path_points[numpoints - 2],
-                          path_points[numpoints - 1]);
+  deltaxy
+    = getEndDeltaXY(hw, path_points[numpoints - 2], path_points[numpoints - 1]);
   if ([path pathType] == 0) // BUTT_END
     {
       points[numpoints - 1].x = path_points[numpoints - 1].x + deltaxy.x;
@@ -274,14 +273,14 @@ NSArray *PathToBoundary(GdsPath *path)
     }
   else /* Extended end */
     {
-      points[numpoints - 1].x =
-        path_points[numpoints - 1].x + deltaxy.x + deltaxy.y;
-      points[numpoints - 1].y =
-        path_points[numpoints - 1].y + deltaxy.y + deltaxy.x;
-      points[numpoints].x =
-        path_points[numpoints - 1].x - deltaxy.x + deltaxy.y;
-      points[numpoints].y =
-        path_points[numpoints - 1].y - deltaxy.y + deltaxy.x;
+      points[numpoints - 1].x
+        = path_points[numpoints - 1].x + deltaxy.x + deltaxy.y;
+      points[numpoints - 1].y
+        = path_points[numpoints - 1].y + deltaxy.y + deltaxy.x;
+      points[numpoints].x
+        = path_points[numpoints - 1].x - deltaxy.x + deltaxy.y;
+      points[numpoints].y
+        = path_points[numpoints - 1].y - deltaxy.y + deltaxy.x;
     }
   free(path_points);
   NSArray *result = [NSArray pointsFromNSPointPtr: points
@@ -329,7 +328,6 @@ NSArray *PathToBoundary(GdsPath *path)
   NSDebugLog(@"pathType = %d", [self pathType]);
 }
 @end
-
 
 @implementation GdsReferenceElement
 - (id) init
@@ -390,15 +388,14 @@ NSArray *PathToBoundary(GdsPath *path)
 - (NSArray *) basicOutlinePoints
 {
   NSRect structureBounds = [[self referenceStructure] boundingBox];
-  return  [[NSArray pointsFromNSRect: structureBounds]
-                   transformedPoints: [self transform]];
+  return [[NSArray pointsFromNSRect: structureBounds]
+                  transformedPoints: [self transform]];
 }
 
 - (NSArray *) lookupOutlinePoints
 {
   return [self basicOutlinePoints];
 }
-
 
 - (void) dealloc
 {
@@ -435,7 +432,7 @@ NSArray *PathToBoundary(GdsPath *path)
 {
   if ([_xyArray count] > 0)
     {
-      return (NSPoint) [[_xyArray objectAtIndex: 0] pointValue];
+      return (NSPoint)[[_xyArray objectAtIndex: 0] pointValue];
     }
   return NSMakePoint(0, 0);
 }
@@ -451,14 +448,12 @@ NSArray *PathToBoundary(GdsPath *path)
 }
 @end // GdsPrimitiveElement
 
-
 @implementation GdsSref
 - (NSString *) typeName
 {
   return @"SREF";
 }
 @end
-
 
 @implementation GdsAref
 - (id) init
@@ -474,7 +469,6 @@ NSArray *PathToBoundary(GdsPath *path)
     }
   return nil;
 }
-
 
 - (NSString *) typeName
 {
@@ -505,7 +499,7 @@ NSArray *PathToBoundary(GdsPath *path)
 {
   if (_offsetTransforms == nil)
     {
-      int ir, ic;
+      int             ir, ic;
       NSMutableArray *transforms;
       transforms = [[NSMutableArray alloc] init];
       for (ic = 0; ic < [self columnCount]; ic++)
@@ -533,13 +527,13 @@ NSArray *PathToBoundary(GdsPath *path)
     {
       NSMutableArray *transforms;
       transforms = [[NSMutableArray alloc] init];
-      NSEnumerator *iter = [[self offsetTransforms] objectEnumerator];
+      NSEnumerator      *iter = [[self offsetTransforms] objectEnumerator];
       NSAffineTransform *tx;
       while ((tx = [iter nextObject]) != nil)
         {
           NSAffineTransform *newTransform;
-          newTransform = [[NSAffineTransform alloc]
-                          initWithTransform: [self transform]];
+          newTransform =
+            [[NSAffineTransform alloc] initWithTransform: [self transform]];
           [newTransform prependTransform: tx];
           [transforms addObject: newTransform];
           RELEASE(newTransform);
@@ -553,11 +547,10 @@ NSArray *PathToBoundary(GdsPath *path)
 - (NSArray *) lookupOutlinePoints
 {
   NSRect bounds = [[self referenceStructure] boundingBox];
-  //CGFloat newWidth, newHeight;
-  //newWidth = [self columnCount] * [self columnSpacing] + bounds.size.width;
-  //newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height;
-  return  [[NSArray pointsFromNSRect: bounds]
-                   transformedPoints: [self transform]];
+  // CGFloat newWidth, newHeight;
+  // newWidth = [self columnCount] * [self columnSpacing] + bounds.size.width;
+  // newHeight = [self rowCount] * [self rowSpacing] + bounds.size.height;
+  return [[NSArray pointsFromNSRect: bounds] transformedPoints: [self transform]];
 }
 
 - (void) debugLog

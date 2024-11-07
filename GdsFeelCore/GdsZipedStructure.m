@@ -4,16 +4,14 @@
 #import "GdsElement+XML.h"
 #import "NSArray+Points.h"
 
-@interface GdsZipedStructure(Private)
+@interface GdsZipedStructure (Private)
 - (int) lastRevisionNumber;
 - (NSString *) pathWithRevisionNumber: (int)revision;
 - (void) changePermissions;
 @end
 
-
 @implementation GdsZipedStructure
-- initWithDirectoryPath: (NSString *)directoryPath
-                library: (GdsLibrary *)library
+- initWithDirectoryPath: (NSString *)directoryPath library: (GdsLibrary *)library
 {
   self = [super initWithLibrary: library];
   if (self != nil)
@@ -24,13 +22,11 @@
   return self;
 }
 
-
 - (void) dealloc
 {
   RELEASE(_directoryPath);
   [super dealloc];
 }
-
 
 - (NSString *) name
 {
@@ -44,14 +40,13 @@
 
 @end
 
-
-@implementation GdsZipedStructure(Private)
+@implementation GdsZipedStructure (Private)
 - (int) lastRevisionNumber
 {
   NSMutableArray *revisions = [NSMutableArray new];
-  NSArray *allNames = [[NSFileManager defaultManager]
-                       directoryContentsAtPath: _directoryPath];
-  NSString *name;
+  NSArray        *allNames =
+    [[NSFileManager defaultManager] directoryContentsAtPath: _directoryPath];
+  NSString     *name;
   NSEnumerator *iter = [allNames objectEnumerator];
   while ((name = [iter nextObject]) != nil)
     {
@@ -78,25 +73,23 @@
 - (NSString *) pathWithRevisionNumber: (int)revision
 {
   NSString *fileName;
-  fileName = [[NSArray arrayWithObjects:
-               [self name],
-               [[NSNumber numberWithInt: [self lastRevisionNumber]]
+  fileName = [[NSArray
+                                            arrayWithObjects: [self name],
+                                    [[NSNumber numberWithInt: [self lastRevisionNumber]]
                 stringValue],
-               @"gdsfeelbeta", nil]
-               componentsJoinedByString: @"."];
+               @"gdsfeelbeta", nil] componentsJoinedByString: @"."];
 
-  return [NSString pathWithComponents:
-                   [NSArray arrayWithObjects:
-                    _directoryPath, fileName, nil]];
+  return [NSString pathWithComponents: [NSArray arrayWithObjects: _directoryPath,
+                                        fileName, nil]];
 }
 
 - (void) changePermissions
 {
-  NSUInteger perm;
+  NSUInteger           perm;
   NSMutableDictionary *fileAttributes;
-  fileAttributes = [[[NSFileManager defaultManager]
-                     fileAttributesAtPath: _directoryPath
-                     traverseLink: YES] mutableCopy];
+  fileAttributes =
+    [[[NSFileManager defaultManager] fileAttributesAtPath: _directoryPath
+                                      traverseLink: YES] mutableCopy];
 
   perm = [fileAttributes filePosixPermissions];
   if (perm == NSNotFound)
@@ -108,21 +101,20 @@
   if ((perm & 0100) == 0)
     {
       [[NSFileManager defaultManager]
-       changeFileAttributes:
-         [NSDictionary dictionaryWithObjectsAndKeys:
-          [NSNumber numberWithUnsignedInt: (perm | 0700)],
-        NSFilePosixPermissions, nil]
+       changeFileAttributes: [NSDictionary
+                                dictionaryWithObjectsAndKeys:
+                                [NSNumber numberWithUnsignedInt: (perm | 0700)],
+                              NSFilePosixPermissions, nil]
                      atPath: _directoryPath];
     }
   RELEASE(fileAttributes);
-  fileAttributes = [[[NSFileManager defaultManager]
-                     fileAttributesAtPath: _directoryPath
-                     traverseLink: YES] mutableCopy];
+  fileAttributes =
+    [[[NSFileManager defaultManager] fileAttributesAtPath: _directoryPath
+                                      traverseLink: YES] mutableCopy];
   perm = [fileAttributes filePosixPermissions];
   NSDebugLog(@"after  perm = %lo", perm);
   RELEASE(fileAttributes);
 }
-
 
 - (void) loadElements
 {
@@ -133,8 +125,8 @@
       return;
     }
   [self changePermissions];
-  NSString *pathToData = [self pathWithRevisionNumber:
-                               [self lastRevisionNumber]];
+  NSString *pathToData =
+    [self pathWithRevisionNumber: [self lastRevisionNumber]];
   GSXMLParser *parser = [GSXMLParser parserWithContentsOfFile: pathToData];
   if (parser == nil)
     {
@@ -168,6 +160,5 @@
     }
 }
 @end
-
 
 // vim: ts=2 sw=2 expandtab
