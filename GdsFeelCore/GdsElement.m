@@ -428,14 +428,49 @@ PathToBoundary(GdsPath *path)
   return _angle;
 }
 
+- (void) setAngle: (float)angle
+{
+   _angle = angle;
+}
+
+- (BOOL) isAbsAngle
+{
+  return _isAbsAngle;
+}
+
+- (void) setAbsAngle: (BOOL)absolute
+{
+  _isAbsAngle = absolute;
+}
+
 - (float) mag;
 {
   return _mag;
 }
 
+- (void) setMag: (float)magnify
+{
+   _mag = magnify;
+}
+
+- (BOOL) isAbsMag
+{
+  return _isAbsMag;
+}
+
+- (void) setAbsMag: (BOOL)absolute
+{
+  _isAbsMag = absolute;
+}
+
 - (BOOL) reflected
 {
   return _reflected;
+}
+
+- (void) setReflected: (BOOL)reflected
+{
+   _reflected = reflected;
 }
 
 - (NSPoint) origin
@@ -445,6 +480,13 @@ PathToBoundary(GdsPath *path)
       return [_coords pointAtIndex: 0];
     }
   return NSMakePoint(0, 0);
+}
+
+- (void) setOrigin: (NSPoint)origin
+{
+  NSValue *pointValue = [NSValue valueWithPoint: origin];
+  NSArray *points = [NSArray arrayWithObject: pointValue];
+  [self setCoords: points];
 }
 
 - (void) debugLog
@@ -490,9 +532,19 @@ PathToBoundary(GdsPath *path)
   return _rowCount;
 }
 
+- (void) setRowCount: (int)count
+{
+  _rowCount = count;
+}
+
 - (int) columnCount
 {
   return _columnCount;
+}
+
+- (void) setColumnCount: (int)count
+{
+  _columnCount = count;
 }
 
 - (float) rowSpacing
@@ -500,9 +552,19 @@ PathToBoundary(GdsPath *path)
   return _rowSpacing;
 }
 
+- (void) setRowSpacing: (float)spacing
+{
+  _rowSpacing = spacing;
+}
+
 - (float) columnSpacing
 {
   return _columnSpacing;
+}
+
+- (void) setColumnSpacing: (float)spacing
+{
+  _columnSpacing = spacing;
 }
 
 - (NSArray *) offsetTransforms

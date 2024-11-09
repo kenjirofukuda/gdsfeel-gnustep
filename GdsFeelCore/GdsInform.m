@@ -1,22 +1,67 @@
 // -*- mode: ObjC -*-
 #import <Foundation/Foundation.h>
+
 #import "GdsInform.h"
 #import "GdsBase.h"
 #import "NSArray+Points.h"
 
 static NSString *InformInspect = @"InformInspect";
 
+#ifndef _GS_CS_FLOAT_COMPARATOR_H
+#define _GS_CS_FLOAT_COMPARATOR_H
+
+@interface GSCSFloatComparator : NSObject
+
++ (BOOL) isApproxiatelyEqual: (CGFloat)a b: (CGFloat)b;
+
++ (BOOL) isApproxiatelyZero: (CGFloat)value;
+
+@end
+
+@implementation GSCSFloatComparator
+
+const float GSCSEpsilon = 1.0e-8;
+
++ (BOOL) isApproxiatelyEqual: (CGFloat)a b: (CGFloat)b
+{
+  return fabs(a - b) <= GSCSEpsilon;
+}
+
++ (BOOL) isApproxiatelyZero: (CGFloat)value
+{
+  return [self isApproxiatelyEqual: value b: 0];
+}
+
+@end
+
+#endif
+
 @interface GdsInform (Private)
 - (void) _handleRecord: (NSData *)record;
+- (void) _handleXY: (NSArray *)dataArray;
 + (GdsElement *) _elementFromStreamRecordType: (int)recType;
 @end
 
 @interface NSData (GdsFeel)
+- (NSArray *) extractBitmask;
 - (NSArray *) extractInt2;
 - (NSArray *) extractInt4;
 - (NSArray *) extractReal8;
 - (NSString *) extractAscii;
 @end
+
+
+unsigned int
+GDSreadBitmask(uint8_t *record)
+{
+  unsigned int result;
+
+  result = record[0];
+  result <<= 8;
+  result += record[1];
+  return result;
+}
+
 
 int
 GDSreadInt2(uint8_t *record)
@@ -178,6 +223,11 @@ GDSreadString(uint8_t *record, int len)
   NSString *dataString = @"";
   switch (buff[1])
     {
+    case GDS_BITARRAY:
+      {
+        dataArray = [body extractBitmask];
+      }
+      break;
     case GDS_INT2:
       {
         dataArray = [body extractInt2];
@@ -257,7 +307,7 @@ GDSreadString(uint8_t *record, int len)
       {
         NSAssert(_element == nil, @"Previouse element not adding structure");
         ASSIGN(_element, [GdsInform _elementFromStreamRecordType: buff[0]]);
-        NSDebugLLog(@"Record", @"ELEMENT: %@", [_element class]);
+        NSDebugLLog(@"Record", @"%@: %@", [_element typeName], [_element class]);
       }
       break;
     case ENDEL:
@@ -271,20 +321,9 @@ GDSreadString(uint8_t *record, int len)
       break;
     case XY:
       {
-        if (_element != nil )
+        if (_element != nil)
           {
-            // NSAssert(_element != nil, @"XY: Current element not alived");
-            NSDebugLLog(@"Record", @"XY: %@", dataArray);
-            NSMutableArray *xyArray = [[NSMutableArray alloc] init];
-            for (int i = 0; i < [dataArray count] / 2; i++)
-              {
-                NSPoint ce;
-                ce.x = [[dataArray objectAtIndex: i * 2] longValue] * [_library userUnit];
-                ce.y = [[dataArray objectAtIndex: i * 2 + 1] longValue] * [_library userUnit];
-                [xyArray addPoint: ce];
-              }
-            [_element setCoords:[NSArray arrayWithArray: xyArray]];
-            RELEASE(xyArray);
+            [self _handleXY: dataArray];
           }
       }
       break;
@@ -299,11 +338,101 @@ GDSreadString(uint8_t *record, int len)
           }
       }
       break;
+    case STRANS:
+      {
+        if ([_element isKindOfClass: [GdsSref class]])
+          {
+            NSDebugLLog(@"Record", @"STRANS: %@", dataArray);
+            GdsSref *refElement = (GdsSref *) _element;
+            UInt16 mask = [[dataArray objectAtIndex: 0] unsignedShortValue];
+            [refElement setAbsAngle: (mask & 0x0001) == 0x0001 ? YES : NO];
+            [refElement setAbsMag: (mask & 0x0002) == 0x0002 ? YES : NO];
+            [refElement setReflected: (mask & 0x8000) == 0x8000 ? YES : NO];
+          }
+      }
+      break;
+    case MAG:
+      {
+        if ([_element isKindOfClass: [GdsSref class]])
+          {
+            NSDebugLLog(@"Record", @"MAG: %@", dataArray);
+            GdsSref *refElement = (GdsSref *) _element;
+            [refElement setMag: [[dataArray objectAtIndex: 0] doubleValue]];            
+          }
+      }
+      break;
+    case ANGLE:
+      {
+        if ([_element isKindOfClass: [GdsSref class]])
+          {
+            NSDebugLLog(@"Record", @"ANGLE: %@", dataArray);
+            GdsSref *refElement = (GdsSref *) _element;
+            [refElement setAngle: [[dataArray objectAtIndex: 0] doubleValue]];            
+          }
+      }
+      break;
+    case COLROW:
+      {
+        if ([_element isMemberOfClass: [GdsAref class]])
+          {
+            NSDebugLLog(@"Record", @"COLROW: %@", dataArray);
+            GdsAref *arefElement = (GdsAref *) _element;
+            [arefElement setColumnCount: [[dataArray objectAtIndex: 0] shortValue]];            
+            [arefElement setRowCount: [[dataArray objectAtIndex: 1] shortValue]];            
+          }
+      }
+      break;
     default:
       // NSDebugLLog (@"Record",  @"Unsupported: %d", buff[0]);
       ;
     }
 }
+
+- (void) _handleXY: (NSArray *)dataArray
+{
+  // NSAssert(_element != nil, @"XY: Current element not alived");
+  NSDebugLLog(@"Record", @"XY: %@", dataArray);
+  NSMutableArray *xyArray = [[NSMutableArray alloc] init];
+  for (int i = 0; i < [dataArray count] / 2; i++)
+    {
+      NSPoint ce;
+      ce.x = [[dataArray objectAtIndex: i * 2] longValue] * [_library userUnit];
+      ce.y = [[dataArray objectAtIndex: i * 2 + 1] longValue] * [_library userUnit];
+      [xyArray addPoint: ce];
+    }
+  [_element setCoords: [NSArray arrayWithArray: xyArray]];
+  if ([_element isMemberOfClass: [GdsAref class]])
+    {
+      GdsAref *aref = (GdsAref *) _element;
+      NSAffineTransform *inverseTransform =
+        [[NSAffineTransform alloc] initWithTransform: [aref transform]];
+      [inverseTransform invert];
+      NSPoint colPoint = [inverseTransform transformPoint: [xyArray pointAtIndex: 1]];
+      if (colPoint.x < 0.0)
+        {
+          NSDebugLLog(@"Record", @"%@", @"Error in AREF! Found a y-axis mirrored array. This is impossible so I'm exiting.");
+        }
+      if ([GSCSFloatComparator isApproxiatelyZero: colPoint.y])
+        {
+          NSDebugLLog(@"Record", @"%@", @"Error in AREF! The second point in XY is broken.");
+        }
+      NSPoint rowPoint = [inverseTransform transformPoint: [xyArray pointAtIndex: 2]];
+      if ([GSCSFloatComparator isApproxiatelyZero: rowPoint.x])
+        {
+          NSDebugLLog(@"Record", @"%@", @"Error in AREF! The third point in XY is broken.");
+        }
+      [aref setColumnSpacing: colPoint.x / [aref columnCount]];
+      [aref setRowSpacing: rowPoint.y / [aref rowCount]];
+      if (false && rowPoint.y < 0.0)
+        {
+          [aref setRowSpacing: [aref rowSpacing] * -0.1];
+        }
+      [_element setCoords: [xyArray subarrayWithRange: NSMakeRange(0, 1)]];
+      RELEASE (inverseTransform);
+    }
+  RELEASE(xyArray);
+}
+
 
 + (GdsElement *) _elementFromStreamRecordType: (int)recType
 {
@@ -336,6 +465,30 @@ GDSreadString(uint8_t *record, int len)
 
 @implementation NSData (GdsFeel)
 
+- (NSArray *) extractBitmask
+{
+  NSMutableArray *result = [NSMutableArray array];
+  int             len = [self length];
+  if (len < 2)
+    {
+      return result;
+    }
+  if (len % 2 != 0)
+    {
+      return result;
+    }
+  uint8_t record[2048];
+  [self getBytes: record];
+  int nElements = (len / 2);
+  for (int i = 0; i < nElements; i++)
+    {
+      [result addObject: [NSNumber numberWithUnsignedShort: (UInt16) GDSreadBitmask(
+                            &record[i * 2])]];
+    }
+
+  return result;
+}
+
 - (NSArray *) extractInt2
 {
   NSMutableArray *result = [NSMutableArray array];
@@ -353,7 +506,7 @@ GDSreadString(uint8_t *record, int len)
   int nElements = (len / 2);
   for (int i = 0; i < nElements; i++)
     {
-      [result addObject: [NSNumber numberWithShort: (UInt16) GDSreadInt2(
+      [result addObject: [NSNumber numberWithShort: (SInt16) GDSreadInt2(
                             &record[i * 2])]];
     }
 
@@ -378,7 +531,7 @@ GDSreadString(uint8_t *record, int len)
   for (int i = 0; i < nElements; i++)
     {
       [result addObject: [NSNumber
-                          numberWithLong: (UInt32) GDSreadInt4(&record[i * 4])]];
+                          numberWithLong: (SInt32) GDSreadInt4(&record[i * 4])]];
     }
   return result;
 }

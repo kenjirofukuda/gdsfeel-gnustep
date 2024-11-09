@@ -62,6 +62,8 @@
   float              _angle;
   float              _mag;
   BOOL               _reflected;
+  BOOL               _isAbsMag;
+  BOOL               _isAbsAngle;
   GdsStructure      *_referenceStructure;
   NSAffineTransform *_transform;
 }
@@ -69,9 +71,17 @@
 - (NSString *) referenceName;
 - (void) setReferenceName: (NSString *)name;
 - (float) angle;
+- (void) setAngle: (float)angle;
+- (BOOL) isAbsAngle;
+- (void) setAbsAngle: (BOOL)absolute;
 - (float) mag;
+- (void) setMag: (float)magnify;
+- (BOOL) isAbsMag;
+- (void) setAbsMag: (BOOL)absolute;
 - (BOOL) reflected;
+- (void) setReflected: (BOOL)reflected;
 - (NSPoint) origin;
+- (void) setOrigin: (NSPoint)origin;
 - (NSArray *) basicOutlinePoints;
 - (GdsStructure *) referenceStructure;
 - (NSAffineTransform *) transform;
@@ -95,9 +105,13 @@
 
 - (NSString *) typeName;
 - (int) rowCount;
+- (void) setRowCount: (int)count;
 - (int) columnCount;
+- (void) setColumnCount: (int)count;
 - (float) rowSpacing;
+- (void) setRowSpacing: (float)spacing;
 - (float) columnSpacing;
+- (void) setColumnSpacing: (float)spacing;
 - (NSArray *) offsetTransforms;
 - (NSArray *) transforms;
 @end
