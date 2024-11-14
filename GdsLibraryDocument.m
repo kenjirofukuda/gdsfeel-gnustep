@@ -37,7 +37,7 @@
 
   if ([typeName isEqualToString: @"gds"])
     {
-      GdsInform *inform = [[GdsInform alloc] initWithFilename:fileName];
+      GdsInform *inform = [[GdsInform alloc] initWithFilename: fileName];
       [inform run];
       ASSIGN(_library, [inform library]);
       NSDebugLLog(@"Record",  @"structures = %@", [[_library structureNames] description]);

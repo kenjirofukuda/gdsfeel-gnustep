@@ -53,6 +53,7 @@
 - (id) init;
 - (NSString *) typeName;
 - (float) width;
+- (void) setWidth: (float)width;
 - (int) pathType;
 @end
 

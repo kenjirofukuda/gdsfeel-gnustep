@@ -321,6 +321,11 @@ PathToBoundary(GdsPath *path)
   return _width;
 }
 
+- (void) setWidth: (float)width
+{
+  _width = width;
+}
+
 - (int) pathType
 {
   return _pathType;

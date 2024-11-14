@@ -327,6 +327,18 @@ GDSreadString(uint8_t *record, int len)
           }
       }
       break;
+    case WIDTH:
+      {
+        if (_element != nil)
+          {
+            if ([_element isKindOfClass: [GdsPath class]] == YES)
+              {
+                GdsPath *path = (GdsPath *) _element;
+                [path setWidth: ([[dataArray objectAtIndex: 0] floatValue] * [_library userUnit])];
+              }
+          }
+      }
+      break;
     case SNAME:
       {
         NSAssert(_element != nil, @"SNAME: Current element not alived");
@@ -357,7 +369,7 @@ GDSreadString(uint8_t *record, int len)
           {
             NSDebugLLog(@"Record", @"MAG: %@", dataArray);
             GdsSref *refElement = (GdsSref *) _element;
-            [refElement setMag: [[dataArray objectAtIndex: 0] doubleValue]];            
+            [refElement setMag: [[dataArray objectAtIndex: 0] doubleValue]];
           }
       }
       break;
@@ -367,7 +379,7 @@ GDSreadString(uint8_t *record, int len)
           {
             NSDebugLLog(@"Record", @"ANGLE: %@", dataArray);
             GdsSref *refElement = (GdsSref *) _element;
-            [refElement setAngle: [[dataArray objectAtIndex: 0] doubleValue]];            
+            [refElement setAngle: [[dataArray objectAtIndex: 0] doubleValue]];
           }
       }
       break;
