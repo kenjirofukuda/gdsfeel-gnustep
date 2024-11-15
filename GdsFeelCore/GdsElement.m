@@ -145,6 +145,11 @@ static int sKeyNumber = 0;
   return _dataType;
 }
 
+- (void) setDataType: (int) dataType
+{
+  _dataType = dataType;
+}
+
 - (void) debugLog
 {
   [super debugLog];

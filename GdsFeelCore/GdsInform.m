@@ -327,14 +327,26 @@ GDSreadString(uint8_t *record, int len)
           }
       }
       break;
+    case DATATYPE:
+      {
+        if (_element != nil)
+          {
+            if ([_element isKindOfClass: [GdsPrimitiveElement class]] == YES)
+              {
+                NSDebugLLog(@"Record", @"DATATYPE: %@", dataArray);
+                [(GdsPrimitiveElement *) _element setDataType: [[dataArray objectAtIndex: 0] intValue]];
+              }
+          }
+      }
+      break;
     case WIDTH:
       {
         if (_element != nil)
           {
             if ([_element isKindOfClass: [GdsPath class]] == YES)
               {
-                GdsPath *path = (GdsPath *) _element;
-                [path setWidth: ([[dataArray objectAtIndex: 0] floatValue] * [_library userUnit])];
+                NSDebugLLog(@"Record", @"WIDTH: %@", dataArray);
+                [(GdsPath * ) _element setWidth: ([[dataArray objectAtIndex: 0] floatValue] * [_library userUnit])];
               }
           }
       }
@@ -408,7 +420,7 @@ GDSreadString(uint8_t *record, int len)
   for (int i = 0; i < [dataArray count] / 2; i++)
     {
       NSPoint ce;
-      ce.x = [[dataArray objectAtIndex: i * 2] longValue] * [_library userUnit];
+      ce.x = [[dataArray objectAtIndex: i * 2    ] longValue] * [_library userUnit];
       ce.y = [[dataArray objectAtIndex: i * 2 + 1] longValue] * [_library userUnit];
       [xyArray addPoint: ce];
     }
