@@ -15,6 +15,10 @@ ${LIBRARY_NAME}_OBJC_FILES = \
 	GdsElement.m \
 	GdsElement+XML.m
 
+# https://stackoverflow.com/questions/40766055/error-strdup-was-not-declared-in-this-scope
+ADDITIONAL_CFLAGS += -std=gnu11
+ADDITIONAL_OBJCFLAGS += -std=gnu11
+
 ifeq ($(FOUNDATION_LIB),apple)
   ADDITIONAL_INCLUDE_DIRS += -framework Renaissance
   ADDITIONAL_GUI_LIBS += -framework Renaissance

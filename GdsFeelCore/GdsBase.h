@@ -69,3 +69,12 @@
 #define GDS_REAL4 (4)
 #define GDS_REAL8 (5)
 #define GDS_ASCII (6)
+
+#ifndef __COREFOUNDATION_CFBASE_H__
+typedef char           SInt8;
+typedef unsigned char  UInt8;
+typedef short          SInt16;
+typedef unsigned short UInt16;
+typedef long           SInt32;
+typedef unsigned long  UInt32;
+#endif
