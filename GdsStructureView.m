@@ -65,7 +65,7 @@ DistanceFromPoints(NSPoint a, NSPoint b);
   RELEASE(_viewport);
   TEST_RELEASE(_structure);
   RELEASE(_infoBar);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (void) setInfoBar: (id)infoBar

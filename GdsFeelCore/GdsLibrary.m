@@ -40,7 +40,7 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   RELEASE(_structureNames);
   RELEASE(_structureMap);
   RELEASE(_layers);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (NSString *) name

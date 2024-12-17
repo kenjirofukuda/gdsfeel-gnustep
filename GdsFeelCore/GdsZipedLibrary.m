@@ -30,7 +30,7 @@
 - (void) dealloc
 {
   RELEASE(_archiver);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (BOOL) isOpen

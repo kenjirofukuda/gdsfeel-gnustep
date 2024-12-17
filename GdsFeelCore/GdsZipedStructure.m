@@ -25,7 +25,7 @@
 - (void) dealloc
 {
   RELEASE(_directoryPath);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (NSString *) name

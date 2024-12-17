@@ -166,7 +166,7 @@ GDSreadString(uint8_t *record, int len)
   RELEASE(_library);
   RELEASE(_structure);
   RELEASE(_element);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (GdsLibrary *) library

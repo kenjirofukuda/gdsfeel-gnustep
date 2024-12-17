@@ -27,7 +27,7 @@
 {
   RELEASE(_element);
   RELEASE(_structureView);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (void) fullDraw

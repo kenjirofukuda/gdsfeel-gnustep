@@ -32,7 +32,7 @@ static int sKeyNumber = 0;
   RELEASE(_coords);
   RELEASE(_boundingBox);
   RELEASE(_outlinePoints);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (BOOL) isReference
@@ -420,7 +420,7 @@ PathToBoundary(GdsPath *path)
 - (void) dealloc
 {
   RELEASE(_referenceName);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (NSString *) referenceName

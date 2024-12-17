@@ -22,7 +22,7 @@
   // TODO release each elements
   RELEASE(_elements);
   RELEASE(_name);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (GdsLibrary *) library

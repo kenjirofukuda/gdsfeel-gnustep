@@ -17,7 +17,7 @@
 - (void) dealloc
 {
   DESTROY(_library);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (void) close
@@ -83,8 +83,8 @@
 }
 
 - (id) tableView: (NSTableView *)aTableView
-  objectValueForTableColumn: (NSTableColumn *)aTableColumn
-                        row: (NSInteger)rowIndex
+objectValueForTableColumn: (NSTableColumn *)aTableColumn
+             row: (NSInteger)rowIndex
 {
   if ([[aTableColumn identifier] isEqualToString: @"Name"])
     {

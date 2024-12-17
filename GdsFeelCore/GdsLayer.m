@@ -30,7 +30,7 @@
 - (void) dealloc
 {
   RELEASE(_color);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (BOOL) selectable
@@ -72,7 +72,7 @@
   _library = nil;
   RELEASE(_path);
   RELEASE(_layerMap);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (GdsLayer *) layerAtNumber: (int)number

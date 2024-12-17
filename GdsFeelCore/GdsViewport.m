@@ -24,7 +24,7 @@
   RELEASE(_transformStack);
   RELEASE(_structure);
   RELEASE(_transform);
-  [super dealloc];
+  DEALLOC;
 }
 
 - (NSAffineTransform *) transform
