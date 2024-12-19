@@ -21,8 +21,8 @@ extern NSString *const GdsLibraryErrorDomain;
   GdsLayers           *_layers;
 }
 
-- (id) init;
-- (id) initWithPath: (NSString *)fileName;
+- (instancetype) init;
+- (instancetype) initWithPath: (NSString *)fileName;
 - (void) dealloc;
 
 - (NSString *) name;
@@ -47,6 +47,7 @@ extern NSString *const GdsLibraryErrorDomain;
 
 - (NSArray *) lookupStructureNames;
 - (void) loadStructures;
+- (NSArray *) usedLayerNumbers;
 
 - (void) addStructure: (GdsStructure *)newStructure;
 @end

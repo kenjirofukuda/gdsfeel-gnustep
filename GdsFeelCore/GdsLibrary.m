@@ -6,13 +6,8 @@
 
 NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 
-@interface GdsLibrary (Private)
-- (NSArray *) lookupStructureNames;
-- (void) loadStructures;
-@end
-
 @implementation GdsLibrary
-- (id) initWithPath: (NSString *)fileName
+- (instancetype) initWithPath: (NSString *)fileName
 {
   self = [super init];
   if (self != nil)
@@ -28,7 +23,7 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   return self;
 }
 
-- (id) init
+- (instancetype) init
 {
   return [self initWithPath: @""];
 }
@@ -125,12 +120,20 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 {
   if (_layers == nil)
     {
-      ASSIGN(_layers, [[GdsLayers alloc] init]);
+      ASSIGN(_layers, [[GdsLayers alloc] initWithLibrary: self]);
     }
   return _layers;
 }
 
-- (NSArray *) lookupStructureNames;
+- (void) addStructure: (GdsStructure *)newStructure
+{
+  NSDebugLog(@"%@", @"addStructure");
+  [_structures addObject: newStructure];
+  [_structureMap setObject: newStructure forKey: [newStructure keyName]];
+  [newStructure setLibrary: self];
+}
+
+- (NSArray *) lookupStructureNames
 {
   NSMutableArray *names = [[NSMutableArray alloc] init];
   NSEnumerator   *iter = [_structures objectEnumerator];
@@ -142,22 +145,30 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
   NSArray *result = [NSArray arrayWithArray: names];
   RELEASE(names);
   return result;
-  return [NSArray array];
 }
 
-- (void) loadStructures;
+- (void) loadStructures
 {
-  // must be overridden
 }
 
-- (void) addStructure: (GdsStructure *)newStructure
+- (NSArray *) usedLayerNumbers
 {
-  NSDebugLog(@"%@", @"addStructure");
-  [_structures addObject: newStructure];
-  [_structureMap setObject: newStructure forKey: [newStructure keyName]];
-  [newStructure setLibrary: self];
+  NSMutableArray *allNumbers = AUTORELEASE([[NSMutableArray alloc] init]);
+  for (GdsStructure *s in [self structures])
+    {
+      for (GdsElement *e in [s elements])
+        {
+          if (! [e isReference])
+            {
+              [allNumbers addObject:
+                            [NSNumber numberWithInt:
+                                        [(GdsPrimitiveElement *)e layerNumber]]];
+            }
+        }
+    }
+  NSSet *numberSet = [NSSet setWithArray: allNumbers];
+  return [numberSet allObjects];
 }
-
 @end
 
 // vim: ts=2 sw=2 expandtab

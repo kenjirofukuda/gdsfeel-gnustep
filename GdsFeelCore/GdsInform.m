@@ -339,6 +339,18 @@ GDSreadString(uint8_t *record, int len)
           }
       }
       break;
+    case LAYER:
+      {
+        if (_element != nil)
+          {
+            if ([_element isKindOfClass: [GdsPrimitiveElement class]] == YES)
+              {
+                NSDebugLLog(@"Record", @"LAYER: %@", dataArray);
+                [(GdsPrimitiveElement *) _element setLayerNumber: [[dataArray objectAtIndex: 0] intValue]];
+              }
+          }
+      }
+      break;
     case WIDTH:
       {
         if (_element != nil)
@@ -401,8 +413,8 @@ GDSreadString(uint8_t *record, int len)
           {
             NSDebugLLog(@"Record", @"COLROW: %@", dataArray);
             GdsAref *arefElement = (GdsAref *) _element;
-            [arefElement setColumnCount: [[dataArray objectAtIndex: 0] shortValue]];            
-            [arefElement setRowCount: [[dataArray objectAtIndex: 1] shortValue]];            
+            [arefElement setColumnCount: [[dataArray objectAtIndex: 0] shortValue]];
+            [arefElement setRowCount: [[dataArray objectAtIndex: 1] shortValue]];
           }
       }
       break;

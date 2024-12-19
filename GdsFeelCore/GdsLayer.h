@@ -12,21 +12,23 @@
   int      _number;
   NSColor *_color;
 }
-- (id) initWithXMLNode: (GSXMLNode *)node;
+- (id) init;
 - (BOOL) selectable;
 - (BOOL) visible;
 - (NSColor *) color;
+- (void) setColor: (NSColor *) color;
 - (int) number;
+- (void) setNumber: (int) number;
 @end
 
 @interface GdsLayers : NSObject
 {
-  NSString            *_path;
   GdsLibrary          *_library;
   NSMutableDictionary *_layerMap;
 }
-- (id) initWithPath: (NSString *)path library: (GdsLibrary *)library;
+- (instancetype) initWithLibrary: (GdsLibrary *)library;
 - (GdsLayer *) layerAtNumber: (int)number;
+- (void) loadLayers;
 @end
 
 // vim: filetype=objc ts=2 sw=2 expandtab

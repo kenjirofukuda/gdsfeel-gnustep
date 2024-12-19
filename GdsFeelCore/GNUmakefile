@@ -9,6 +9,7 @@ ${LIBRARY_NAME}_OBJC_FILES = \
 	GdsZipedStructure.m \
 	GdsViewport.m \
 	GdsLayer.m \
+	GdsLayer+XML.m \
 	GdsLibrary.m \
 	GdsZipedLibrary.m \
 	GdsInform.m \

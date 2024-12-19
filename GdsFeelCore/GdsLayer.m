@@ -4,16 +4,8 @@
 #import "GdsLayer.h"
 #import "GdsLibrary.h"
 
-@interface GdsLayer (Private)
-- (void) loadFromXMLNode: (GSXMLNode *)xmlNode;
-@end
-
-@interface GdsLayers (Private)
-- (void) loadLayers;
-@end
-
 @implementation GdsLayer
-- (id) initWithXMLNode: (GSXMLNode *)node
+- (id) init
 {
   self = [super init];
   if (self)
@@ -21,8 +13,7 @@
       _selectable = NO;
       _visible = NO;
       _number = 0;
-      ASSIGN(_color, [NSColor whiteColor]);
-      [self loadFromXMLNode: node];
+      ASSIGNCOPY(_color, [NSColor whiteColor]);
     }
   return self;
 }
@@ -48,19 +39,28 @@
   return _color;
 }
 
+- (void) setColor: (NSColor *) color
+{
+  ASSIGNCOPY(_color, color);
+}
+
 - (int) number
 {
   return _number;
 }
+
+- (void) setNumber: (int) number
+{
+  _number = number;
+}
 @end
 
 @implementation GdsLayers
-- (id) initWithPath: (NSString *)path library: (GdsLibrary *)library
+- (instancetype) initWithLibrary: (GdsLibrary *)library;
 {
   self = [super init];
   if (self)
     {
-      ASSIGNCOPY(_path, path);
       _library = library;
       _layerMap = nil; // lazy
     }
@@ -70,7 +70,6 @@
 - (void) dealloc
 {
   _library = nil;
-  RELEASE(_path);
   RELEASE(_layerMap);
   DEALLOC;
 }
@@ -86,72 +85,39 @@
   return [_layerMap valueForKey: key];
 }
 
-@end
-
-@implementation GdsLayer (Private)
-- (void) loadFromXMLNode: (GSXMLNode *)xmlNode
+- (NSArray *) colorsThisMany: (NSUInteger)count
+                         hue: (CGFloat)hue
+                  saturation: (CGFloat)saturation
+                  brightness: (CGFloat)brightness;
 {
-  _visible = [[xmlNode objectForKey: @"visible"] boolValue];
-  _selectable = [[xmlNode objectForKey: @"selectable"] boolValue];
-  _number = [[xmlNode objectForKey: @"gdsno"] intValue];
-  GSXMLNode *node = [xmlNode firstChildElement];
-  GSXMLNode *colorNode = nil;
-  while (node != nil)
+  NSMutableArray *colors = [NSMutableArray array];
+  CGFloat step = 1.0 / MAX(count, 1);
+  for (int i = 0; i < count; i++)
     {
-      if ([[node name] isEqualToString: @"color"])
-        {
-          colorNode = node;
-          break;
-        }
-      node = [node nextElement];
+      [colors addObject: [NSColor colorWithCalibratedHue: hue + (i * step)
+                                              saturation: saturation
+                                              brightness: brightness
+                                                   alpha: 1.0]];
     }
-  if (colorNode)
-    {
-      float a, r, g, b;
-      r = [[colorNode objectForKey: @"r"] floatValue];
-      g = [[colorNode objectForKey: @"g"] floatValue];
-      b = [[colorNode objectForKey: @"b"] floatValue];
-      a = [[colorNode objectForKey: @"a"] floatValue];
-      ASSIGN(_color, [NSColor colorWithDeviceRed: r green: g blue: b alpha: a]);
-    }
+  return colors;
 }
-@end
 
-@implementation GdsLayers (Private)
 - (void) loadLayers
 {
-  NSDebugLog(@"#loadLayers");
-  GSXMLParser *parser = [GSXMLParser parserWithContentsOfFile: _path];
-  if (parser == nil)
+  NSLog(@"#loadLayers");
+  NSArray *layerNumbers = [_library usedLayerNumbers];
+  NSArray *colors = [self colorsThisMany: [layerNumbers count]
+                                     hue: 0.0
+                              saturation: 0.7
+                              brightness: 1.0];
+  int index = 0;
+  for (NSNumber *number in layerNumbers)
     {
-      NSWarnLog(@"parser get fail");
-      return;
-    }
-  if ([parser parse] == NO)
-    {
-      NSWarnLog(@"parse error");
-      return;
-    }
-  GSXMLDocument *doc = [parser document];
-  if (doc == nil)
-    {
-      NSWarnLog(@"document get fail");
-      return;
-    }
-  GSXMLNode *rootNode = [doc root];
-  GSXMLNode *node = [rootNode firstChildElement];
-  while (node != nil)
-    {
-      NSDebugLog(@"node = %@", node);
-      GdsLayer *newLayer;
-      newLayer = [[GdsLayer alloc] initWithXMLNode: node];
-      if (newLayer != nil)
-        {
-          [_layerMap
-           setValue: newLayer
-             forKey: [[NSNumber numberWithInt: [newLayer number]] stringValue]];
-        }
-      node = [node nextElement];
+      GdsLayer *newLayer = [[GdsLayer alloc] init];
+      [newLayer setNumber: [number intValue]];
+      [newLayer setColor: [colors objectAtIndex: index]];
+      [_layerMap setValue: newLayer forKey: [number stringValue]];
+      index++;
     }
 }
 

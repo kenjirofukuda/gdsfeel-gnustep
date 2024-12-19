@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "osxportability.h"
 #import "GdsZipedLibrary.h"
-#import "GdsLayer.h"
+#import "GdsLayer+XML.h"
 #import "GdsZipedStructure.h"
 
 @interface GdsZipedLibrary (Private)
@@ -44,8 +44,9 @@
   if (_layers == nil)
     {
       ASSIGN(_layers,
-             [[GdsLayers alloc] initWithPath: [self pathToLayersInformation]
-                                     library: self]);
+             [[GdsLayersXML alloc] initWithLibrary: self
+                                           xmlPath: [self pathToLayersInformation]]);
+
     }
   return _layers;
 }

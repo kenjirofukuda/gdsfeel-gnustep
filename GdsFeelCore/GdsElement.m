@@ -140,6 +140,11 @@ static int sKeyNumber = 0;
   return _layerNumber;
 }
 
+- (void) setLayerNumber: (int) layerNumber
+{
+  _layerNumber = layerNumber;
+}
+
 - (int) dataType
 {
   return _dataType;

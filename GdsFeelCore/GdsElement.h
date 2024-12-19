@@ -37,6 +37,7 @@
 }
 - (id) init;
 - (int) layerNumber;
+- (void) setLayerNumber: (int) layerNumber;
 - (int) dataType;
 - (void) setDataType: (int) dataType;
 - (void) debugLog;

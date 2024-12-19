@@ -41,6 +41,7 @@
       [inform run];
       ASSIGN(_library, [inform library]);
       NSDebugLLog(@"Record",  @"structures = %@", [[_library structureNames] description]);
+      NSLog(@"usedLayerNumbers = %@", [_library usedLayerNumbers]);
       return YES;
     }
 
