@@ -23,6 +23,10 @@
       <menuItem title="Move up" action="viewMoveUp:" />
       <menuItem title="Move down" action="viewMoveDown:" />
     </menu>
+    <menu title="View2">
+      <menuItem title="Show structures" action="showStructures:" />
+      <menuItem title="Hide structures" action="hideStructures:" />
+    </menu>
     <menuItem title="Quit" keyEquivalent="q" action="terminate:"/>
   </menu>
 </objects>

@@ -11,6 +11,7 @@
   NSArray         *_structureNames;
 
   IBOutlet GdsStructureView *structureView;
+  IBOutlet NSScrollView     *structuresArea;
   IBOutlet id                structureListView;
   IBOutlet id                infoBarView;
 }

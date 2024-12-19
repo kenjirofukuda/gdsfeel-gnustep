@@ -8,6 +8,12 @@
 - (void) logOutlet;
 @end
 
+
+@interface GdsLibraryDocument (Actions)
+- (IBAction) showStructures: (id)sender;
+- (IBAction) hideStructures: (id)sender;
+@end
+
 @implementation GdsLibraryDocument
 - (NSString *) windowNibName
 {
@@ -99,11 +105,10 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
 - (void) tableViewSelectionDidChange: (NSNotification *)aNotification
 {
   NSDebugLog(@"#tableViewSelectionDidChange: %@", aNotification);
-  NSString *structureName;
-  structureName =
-    [[_library structureNames] objectAtIndex: [structureListView selectedRow]];
-  GdsStructure *structure;
-  structure = [_library structureForKey: structureName];
+  NSInteger rowIndex = [structureListView selectedRow];
+  if (rowIndex < 0) return;
+  NSString *structureName = [[_library structureNames] objectAtIndex: rowIndex];
+  GdsStructure *structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
   NSDebugLog(@"structure = %@", structure);
 }
@@ -116,6 +121,31 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
   NSDebugLog(@"structureView = %@", structureView);
   NSDebugLog(@"structureListView = %@", structureListView);
 }
+@end
+
+@implementation GdsLibraryDocument (Actions)
+- (void) setStructuresVisible: (BOOL)state
+{
+  NSView *view = structuresArea;
+  NSLog(@"view: %@", view);
+
+  [view setHidden: ! state];
+  [view setNeedsDisplay: YES];
+  [[view superview] layout];
+}
+
+- (IBAction) showStructures: (id)sender
+{
+  NSLog(@"showStructures: %@", sender);
+  [self setStructuresVisible: YES];
+}
+
+- (IBAction) hideStructures: (id)sender
+{
+  NSLog(@"hideStructures: %@", sender);
+  [self setStructuresVisible: NO];
+}
+
 @end
 
 // vim: sw=2 ts=2 expandtab filetype=objc
