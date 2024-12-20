@@ -8,7 +8,6 @@
 - (void) logOutlet;
 @end
 
-
 @interface GdsLibraryDocument (Actions)
 - (IBAction) showStructures: (id)sender;
 - (IBAction) hideStructures: (id)sender;
@@ -23,6 +22,7 @@
 - (void) dealloc
 {
   DESTROY(_library);
+  RELEASE(_elementListDelegate);
   DEALLOC;
 }
 
@@ -72,11 +72,17 @@
   [[windowController window]
    setTitle: [NSString stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
-  [structureListView setDataSource: self];
+
   [structureListView setDelegate: self];
+  [structureListView setDataSource: self];
   [structureView setInfoBar: infoBarView];
-  NSDebugLog(@"#windowControllerDidLoadNib: ca");
+
+  _elementListDelegate = [[ElementListDelegate alloc] init];
+  [elementListView setDelegate: _elementListDelegate];
+  [elementListView setDataSource: _elementListDelegate];
+  NSLog(@"elementListView: %@", elementListView);
 }
+
 @end
 
 @implementation GdsLibraryDocument (TableView)
@@ -89,9 +95,9 @@
   return [[_library structureNames] count];
 }
 
-- (id) tableView: (NSTableView *)aTableView
+- (id)          tableView: (NSTableView *)aTableView
 objectValueForTableColumn: (NSTableColumn *)aTableColumn
-             row: (NSInteger)rowIndex
+                      row: (NSInteger)rowIndex
 {
   if ([[aTableColumn identifier] isEqualToString: @"Name"])
     {
@@ -110,6 +116,8 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
   NSString *structureName = [[_library structureNames] objectAtIndex: rowIndex];
   GdsStructure *structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
+  [_elementListDelegate setStructure: structure];
+  [elementListView setNeedsDisplay: YES];
   NSDebugLog(@"structure = %@", structure);
 }
 @end
@@ -145,7 +153,68 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
   NSLog(@"hideStructures: %@", sender);
   [self setStructuresVisible: NO];
 }
+@end
 
+
+@implementation ElementListDelegate
+- (instancetype) init
+{
+  self = [super init];
+  if (self != nil)
+    {
+      _structure = nil;
+    }
+
+  return self;
+}
+
+- (void) dealloc
+{
+  TEST_RELEASE(_structure);
+  DEALLOC;
+}
+
+- (void) setStructure: (GdsStructure *)structure
+{
+  ASSIGN(_structure, structure);
+  NSLog(@"_structure: %@", _structure);
+}
+
+@end
+
+@implementation ElementListDelegate (TableView)
+- (NSInteger) numberOfRowsInTableView: (NSTableView *)aTableView
+{
+  if (_structure == nil)
+    {
+      NSLog(@"Zero: %@", @"Hage");
+      return 0;
+    }
+  NSLog(@"elements: %@", [_structure elements]);
+  NSLog(@"count: %ld", [[_structure elements] count]);
+  return [[_structure elements] count];
+}
+
+- (id)          tableView: (NSTableView *)aTableView
+objectValueForTableColumn: (NSTableColumn *)aTableColumn
+                      row: (NSInteger)rowIndex
+{
+  NSLog(@"rowIndex: %ld", rowIndex);
+  // if (_structure == nil) return nil;
+  // if ([[aTableColumn identifier] isEqualToString: @"Name"])
+    {
+      NSLog(@"value: %@", [[_structure elements] objectAtIndex: rowIndex]);
+      return [[[_structure elements] objectAtIndex: rowIndex] description];
+    }
+  return nil;
+}
+@end
+
+@implementation ElementListDelegate (TableViewDelegate)
+- (void) tableViewSelectionDidChange: (NSNotification *)aNotification
+{
+  NSLog(@"tableViewSelectionDidChange: %@", aNotification);
+}
 @end
 
 // vim: sw=2 ts=2 expandtab filetype=objc
