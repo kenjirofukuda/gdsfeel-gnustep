@@ -26,6 +26,11 @@
   DEALLOC;
 }
 
+- (ElementListDelegate *) elementListDelegate
+{
+  return _elementListDelegate;
+}
+
 - (void) close
 {
   [_library closeForReading];
@@ -75,12 +80,16 @@
 
   [structureListView setDelegate: self];
   [structureListView setDataSource: self];
+  [structureListView setDrawsGrid: NO];
   [structureView setInfoBar: infoBarView];
 
   _elementListDelegate = [[ElementListDelegate alloc] init];
+  NSLog(@"elementListView: %@", elementListView);
   [elementListView setDelegate: _elementListDelegate];
   [elementListView setDataSource: _elementListDelegate];
-  NSLog(@"elementListView: %@", elementListView);
+  [elementListView setBackgroundColor: [NSColor redColor]];
+  [elementListView setDrawsGrid: YES];
+  
 }
 
 @end
@@ -125,8 +134,8 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
 @implementation GdsLibraryDocument (Private)
 - (void) logOutlet
 {
-  NSDebugLog(@"infoBarView = %@", infoBarView);
-  NSDebugLog(@"structureView = %@", structureView);
+  NSDebugLog(@"      infoBarView = %@", infoBarView);
+  NSDebugLog(@"    structureView = %@", structureView);
   NSDebugLog(@"structureListView = %@", structureListView);
 }
 @end
@@ -164,7 +173,6 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
     {
       _structure = nil;
     }
-
   return self;
 }
 
@@ -187,11 +195,8 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
 {
   if (_structure == nil)
     {
-      NSLog(@"Zero: %@", @"Hage");
       return 0;
     }
-  NSLog(@"elements: %@", [_structure elements]);
-  NSLog(@"count: %ld", [[_structure elements] count]);
   return [[_structure elements] count];
 }
 
@@ -199,12 +204,10 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
 objectValueForTableColumn: (NSTableColumn *)aTableColumn
                       row: (NSInteger)rowIndex
 {
-  NSLog(@"rowIndex: %ld", rowIndex);
-  // if (_structure == nil) return nil;
-  // if ([[aTableColumn identifier] isEqualToString: @"Name"])
+  if (_structure == nil) return nil;
+  if ([[aTableColumn identifier] isEqualToString: @"Item"])
     {
-      NSLog(@"value: %@", [[_structure elements] objectAtIndex: rowIndex]);
-      return [[[_structure elements] objectAtIndex: rowIndex] description];
+      return [[_structure elements] objectAtIndex: rowIndex];
     }
   return nil;
 }

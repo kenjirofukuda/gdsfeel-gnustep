@@ -30,6 +30,7 @@
 }
 
 - (void) dealloc;
+- (ElementListDelegate *) elementListDelegate;
 @end
 
 // vim: sw=2 ts=2 expandtab filetype=objc

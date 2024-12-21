@@ -5,14 +5,15 @@
 <objects>
   <window id="libraryWindow" title="GDSII" center="yes" miniaturizable="no" resizable="yes">
     <vbox>
-      <splitView vertical="yes">
+      <!-- <splitView vertical="yes"> -->
+      <hbox>
         <scrollView id="structuresArea" width="150" halign="bottom" valign="expand">
           <tableView id="structureListView">
             <tableColumn identifier="Name" minWidth="100" editable="NO" title="Structure Name"/>
           </tableView>
         </scrollView>
-        <scrollView id="elementsArea" width="150" halign="expand" valign="expand">
-          <tableView id="elementListView">
+        <scrollView id="elementsArea" width="150" halign="bottom" valign="expand">
+          <tableView id="elementListView" dataSource="#NSOwner.elementListDelegate">
             <tableColumn identifier="Item" minWidth="100" editable="NO" title="Element"/>
           </tableView>
         </scrollView>
@@ -20,7 +21,8 @@
                   valign="expand" halign="expand"
                    width="512" height="342" >
         </view>
-      </splitView>
+      </hbox>
+      <!-- </splitView> -->
       <label id="infoBar" valign="bottom" halign="expand" width="612" height="20" >NO STRUCTURE OPEN</label>
     </vbox>
   </window>
