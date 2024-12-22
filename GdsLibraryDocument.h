@@ -19,14 +19,15 @@
 {
   GdsZipedLibrary     *_library;
   NSArray             *_structureNames;
-  ElementListDelegate *_elementListDelegate;
-
   IBOutlet GdsStructureView *structureView;
   IBOutlet NSScrollView     *structuresArea;
-  IBOutlet id                structureListView;
   IBOutlet NSScrollView     *elementsArea;
-  IBOutlet id                elementListView;
   IBOutlet id                infoBarView;
+  IBOutlet NSTableView      *structureListView;
+  IBOutlet NSTableView      *elementListView;
+@public
+  ElementListDelegate *elementListDelegate;
+
 }
 
 - (void) dealloc;

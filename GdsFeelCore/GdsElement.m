@@ -110,6 +110,12 @@ static int sKeyNumber = 0;
   NSDebugLog(@"description = %@", [self description]);
   NSDebugLog(@"  keyNumber = %d", [self keyNumber]);
 }
+
+- (NSString *) recordDescription
+{
+  return [NSString stringWithFormat: @"%@ (%d)", [self typeName], [self keyNumber]];
+}
+
 @end
 
 @implementation GdsElement (Private)
@@ -519,6 +525,11 @@ PathToBoundary(GdsPath *path)
 - (NSString *) typeName
 {
   return @"SREF";
+}
+
+- (NSString *) recordDescription
+{
+  return [NSString stringWithFormat: @"%@ \"%@\" (%d)", [self typeName], [self referenceName], [self keyNumber]];
 }
 @end
 

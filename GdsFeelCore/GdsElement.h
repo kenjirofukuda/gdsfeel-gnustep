@@ -28,6 +28,7 @@
 
 - (NSArray *) lookupOutlinePoints;
 - (NSRect) lookupBoundingBox;
+- (NSString *) recordDescription;
 @end
 
 @interface GdsPrimitiveElement : GdsElement

@@ -22,13 +22,13 @@
 - (void) dealloc
 {
   DESTROY(_library);
-  RELEASE(_elementListDelegate);
+  RELEASE(elementListDelegate);
   DEALLOC;
 }
 
 - (ElementListDelegate *) elementListDelegate
 {
-  return _elementListDelegate;
+  return elementListDelegate;
 }
 
 - (void) close
@@ -73,23 +73,20 @@
   [super windowControllerDidLoadNib: windowController];
   NSDebugLog(@"#windowControllerDidLoadNib:");
   NSDebugLog(@"windowController = %@", windowController);
-  NSDebugLog(@"window = %@", [windowController window]);
+  NSDebugLog(@"          window = %@", [windowController window]);
   [[windowController window]
    setTitle: [NSString stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
 
+  NSAssert(structureListView != nil, @"structureListView != nil");
   [structureListView setDelegate: self];
   [structureListView setDataSource: self];
-  [structureListView setDrawsGrid: NO];
   [structureView setInfoBar: infoBarView];
 
-  _elementListDelegate = [[ElementListDelegate alloc] init];
-  NSLog(@"elementListView: %@", elementListView);
-  [elementListView setDelegate: _elementListDelegate];
-  [elementListView setDataSource: _elementListDelegate];
-  [elementListView setBackgroundColor: [NSColor redColor]];
-  [elementListView setDrawsGrid: YES];
-  
+  elementListDelegate = [[ElementListDelegate alloc] init];
+  NSAssert(elementListView != nil, @"elementListView != nil");
+  [elementListView setDelegate: elementListDelegate];
+  [elementListView setDataSource: elementListDelegate];
 }
 
 @end
@@ -125,8 +122,8 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
   NSString *structureName = [[_library structureNames] objectAtIndex: rowIndex];
   GdsStructure *structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
-  [_elementListDelegate setStructure: structure];
-  [elementListView setNeedsDisplay: YES];
+  [elementListDelegate setStructure: structure];
+  [elementListView reloadData];
   NSDebugLog(@"structure = %@", structure);
 }
 @end
@@ -204,10 +201,9 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
 objectValueForTableColumn: (NSTableColumn *)aTableColumn
                       row: (NSInteger)rowIndex
 {
-  if (_structure == nil) return nil;
   if ([[aTableColumn identifier] isEqualToString: @"Item"])
     {
-      return [[_structure elements] objectAtIndex: rowIndex];
+      return [[[_structure elements] objectAtIndex: rowIndex] recordDescription];
     }
   return nil;
 }
