@@ -1,10 +1,10 @@
 # gdsfeel-gnustep
 git repositry name. original project name is GdsFeelGS.
 
+<http://gdsfeel.com/hikifarm/GNUstep/?GdsFeelGS>
+
 ## technical detail
 https://deepwiki.com/kenjirofukuda/gdsfeel-gnustep
-
-<http://gdsfeel.com/hikifarm/GNUstep/?GdsFeelGS>
 
 ## GdsFeelGS
 GdsFeelGS is a variation of GdsFeel project http://gdsfeel.com/note/.
@@ -52,5 +52,6 @@ DownArrow |scroll view down
   1. GNUstepBase Additons build error on Mac OS X (maintenance stoped).
   2. CGFloat conflict problem. 
      http://groups.google.co.jp/group/gnu.gnustep.discuss/browse_thread/thread/4e7f8415e42284e2
+
 
 
