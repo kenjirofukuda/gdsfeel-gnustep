@@ -21,6 +21,7 @@ static int sKeyNumber = 0;
       _coords = [[NSArray alloc] init];
       sKeyNumber++;
       _keyNumber = sKeyNumber;
+      _extension = [[NSMutableDictionary alloc] init];
       return self;
     }
   return nil;
@@ -28,6 +29,7 @@ static int sKeyNumber = 0;
 
 - (void) dealloc
 {
+  RELEASE(_extension);
   RELEASE(_structure);
   RELEASE(_coords);
   RELEASE(_boundingBox);
@@ -114,6 +116,11 @@ static int sKeyNumber = 0;
 - (NSString *) recordDescription
 {
   return [NSString stringWithFormat: @"%@ (%d)", [self typeName], [self keyNumber]];
+}
+
+- (NSMutableDictionary *) extension
+{
+  return _extension;
 }
 
 @end

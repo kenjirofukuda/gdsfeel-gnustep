@@ -10,6 +10,7 @@
   GdsStructure *_structure;
   NSValue      *_boundingBox;
   NSArray      *_outlinePoints;
+  NSMutableDictionary *_extension;
 }
 - (id) init;
 - (void) dealloc;
@@ -29,6 +30,8 @@
 - (NSArray *) lookupOutlinePoints;
 - (NSRect) lookupBoundingBox;
 - (NSString *) recordDescription;
+
+- (NSMutableDictionary *) extension;
 @end
 
 @interface GdsPrimitiveElement : GdsElement

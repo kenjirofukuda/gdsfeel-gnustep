@@ -41,11 +41,22 @@
   [self strokeOutline];
 }
 
-- (NSColor *) frameColor
+- (NSColor *) _frameColor
 {
   GdsPrimitiveElement *primitive = (GdsPrimitiveElement *) _element;
   return [[[[[primitive structure] library] layers]
                                     layerAtNumber: [primitive layerNumber]] color];
+}
+
+- (NSColor *) frameColor
+{
+  NSColor *color = [[_element extension] objectForKey: @"frameColor"];
+  if (color == nil)
+    {
+      color = [self _frameColor];
+      [[_element extension] setObject: color forKey: @"frameColor"];      
+    }
+  return color;
 }
 
 + (Class) drawerClassForElement: (GdsElement *)element

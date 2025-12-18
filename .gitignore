@@ -6,3 +6,12 @@ obj/
 *.app
 .ccls-cache
 *.orig
+/.cache/
+/.ccls
+/.vscode/
+/GdsFeelCore/.cache/
+/GdsFeelCore/.ccls
+/GdsFeelCore/.projectile
+/GdsFeelCore/.vscode/
+/GdsFeelCore/compile_commands.json
+/compile_commands.json

@@ -217,12 +217,17 @@ DistanceFromPoints(NSPoint a, NSPoint b);
 {
   GdsElementDrawer *drawer;
   Class             drawerClass;
-  drawerClass = [GdsElementDrawer drawerClassForElement: element];
-  if (drawerClass == Nil)
-    {
-      return;
+  drawer = [[element extension] objectForKey:@"drawer"];
+  if (drawer == nil) 
+    {      
+      drawerClass = [GdsElementDrawer drawerClassForElement: element];
+      if (drawerClass == Nil)
+        {
+          return;
+        }
+      drawer = [[drawerClass alloc] initWithElement:element view:self];
+      [[element extension] setObject: drawer forKey: @"drawer"];
     }
-  drawer = AUTORELEASE([[drawerClass alloc] initWithElement: element view: self]);
   [drawer fullDraw];
 }
 @end // (Drawing)

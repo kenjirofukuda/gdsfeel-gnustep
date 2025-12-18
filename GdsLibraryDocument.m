@@ -16,6 +16,7 @@
 @implementation GdsLibraryDocument
 - (NSString *) windowNibName
 {
+  NSLog(@"%@", @"windowNibName");
   return @"Window";
 }
 
@@ -70,10 +71,12 @@
 
 - (void) windowControllerDidLoadNib: (NSWindowController *)windowController
 {
+  NSLog(@"%@", @"windowControllerDidLoadNib:");
+  
   [super windowControllerDidLoadNib: windowController];
-  NSDebugLog(@"#windowControllerDidLoadNib:");
-  NSDebugLog(@"windowController = %@", windowController);
-  NSDebugLog(@"          window = %@", [windowController window]);
+  NSDebugLLog(@"Connect", @"#windowControllerDidLoadNib:");
+  NSDebugLLog(@"Connect", @"windowController = %@", windowController);
+  NSDebugLLog(@"Connect", @"          window = %@", [windowController window]);
   [[windowController window]
    setTitle: [NSString stringWithFormat: @"GDSII: %@", [_library keyName]]];
   [self logOutlet];
@@ -122,9 +125,11 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
   NSString *structureName = [[_library structureNames] objectAtIndex: rowIndex];
   GdsStructure *structure = [_library structureForKey: structureName];
   [structureView setStructure: structure];
+  NSDebugLLog(@"Connect", @"elementListDelegate: %@", elementListDelegate);
   [elementListDelegate setStructure: structure];
+  NSDebugLLog(@"Connect", @"elementListView: %@", elementListView);
   [elementListView reloadData];
-  NSDebugLog(@"structure = %@", structure);
+  NSDebugLLog(@"Connect", @"structure = %@", structure);
 }
 @end
 
@@ -182,7 +187,7 @@ objectValueForTableColumn: (NSTableColumn *)aTableColumn
 - (void) setStructure: (GdsStructure *)structure
 {
   ASSIGN(_structure, structure);
-  NSLog(@"_structure: %@", _structure);
+  NSDebugLLog(@"Connect", @"_structure: %@", _structure);
 }
 
 @end
