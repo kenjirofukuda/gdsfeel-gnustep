@@ -17,6 +17,7 @@
   self = [super init];
   if (self != nil)
     {
+      _frameColor = nil;
       ASSIGN(_element, element);
       ASSIGN(_structureView, view);
     }
@@ -50,13 +51,13 @@
 
 - (NSColor *) frameColor
 {
-  NSColor *color = [[_element extension] objectForKey: @"frameColor"];
-  if (color == nil)
+  //  NSColor *color = [[_element extension] objectForKey: @"frameColor"];
+  if (_frameColor == nil)
     {
-      color = [self _frameColor];
-      [[_element extension] setObject: color forKey: @"frameColor"];      
+      _frameColor = [self _frameColor];
+      // [[_element extension] setObject: color forKey: @"frameColor"];      
     }
-  return color;
+  return _frameColor;
 }
 
 + (Class) drawerClassForElement: (GdsElement *)element

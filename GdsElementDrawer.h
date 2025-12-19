@@ -7,6 +7,7 @@
 {
   GdsElement       *_element;
   GdsStructureView *_structureView;
+  NSColor *_frameColor;
 }
 - (id) initWithElement: (GdsElement *)element view: (GdsStructureView *)view;
 - (void) dealloc;

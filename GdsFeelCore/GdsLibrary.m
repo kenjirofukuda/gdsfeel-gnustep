@@ -136,9 +136,7 @@ NSString *const GdsLibraryErrorDomain = @"com.gdsfeel.GdsLibrary.ErrorDomain";
 - (NSArray *) lookupStructureNames
 {
   NSMutableArray *names = [[NSMutableArray alloc] init];
-  NSEnumerator   *iter = [_structures objectEnumerator];
-  GdsStructure   *structure;
-  while ((structure = [iter nextObject]) != nil)
+  for (GdsStructure *structure in _structures)
     {
       [names addObject: [structure keyName]];
     }

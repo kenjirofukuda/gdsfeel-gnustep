@@ -24,7 +24,8 @@ extern NSString *GdsStructureDidChangeNotification;
 - (void) setInfoBar: (id)infoBar;
 
 - (void) drawRect: (NSRect)rect;
-- (void) drawElements: (NSArray *)elements;
+- (void) drawElements: (NSArray *)elements transform: tx;
+
 @end
 
 @interface GdsStructureView (Actions)

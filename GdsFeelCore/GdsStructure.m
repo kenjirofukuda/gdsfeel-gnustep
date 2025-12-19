@@ -97,10 +97,8 @@
 
 - (NSRect) lookupBoundingBox
 {
-  NSEnumerator   *iter = [[self elements] objectEnumerator];
-  GdsElement     *element;
   NSMutableArray *points = [NSMutableArray new];
-  while ((element = [iter nextObject]) != nil)
+  for (GdsElement     *element in [self elements])
     {
       NSRect r = [element boundingBox];
       [points addPointX: NSMinX(r) y: NSMinY(r)];

@@ -37,11 +37,8 @@ static float BIGVAL = FLT_MAX / 2.0;
   NSPoint *points = malloc(sizeof(NSPoint) * [self count]);
   if (outCountPoints)
     *outCountPoints = [self count];
-
-  NSEnumerator *iter = [self objectEnumerator];
-  NSValue      *v;
-  int           i = 0;
-  while ((v = [iter nextObject]) != nil)
+  int i = 0;
+  for (NSValue *v in self)
     {
       NSPoint xy = [v pointValue];
       points[i] = xy;
@@ -55,9 +52,7 @@ static float BIGVAL = FLT_MAX / 2.0;
   float xmin, xmax, ymin, ymax;
   xmin = ymin = BIGVAL;
   xmax = ymax = -BIGVAL;
-  NSEnumerator *iter = [self objectEnumerator];
-  NSValue      *v;
-  while ((v = [iter nextObject]) != nil)
+  for (NSValue *v in self)
     {
       NSPoint xy = [v pointValue];
       if (xmin > xy.x)
@@ -75,9 +70,7 @@ static float BIGVAL = FLT_MAX / 2.0;
 - (NSArray *) transformedPoints: (NSAffineTransform *)transform
 {
   NSMutableArray *array = [NSMutableArray new];
-  NSEnumerator   *iter = [self objectEnumerator];
-  NSValue        *v;
-  while ((v = [iter nextObject]) != nil)
+  for (NSValue *v in self)
     {
       NSPoint xy = [v pointValue];
       [array addPoint: [transform transformPoint: xy]];

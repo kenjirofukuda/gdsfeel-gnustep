@@ -32,11 +32,9 @@
   if (_transform == nil)
     {
       NSAffineTransform *newTransform;
-      NSAffineTransform *tx;
       newTransform = [NSAffineTransform transform];
       [newTransform prependTransform: [self basicTransform]];
-      NSEnumerator *iter = [_transformStack objectEnumerator];
-      while ((tx = [iter nextObject]) != nil)
+      for (NSAffineTransform *tx in _transformStack)
         {
           [newTransform prependTransform: tx];
         }

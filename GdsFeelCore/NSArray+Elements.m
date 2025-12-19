@@ -6,10 +6,7 @@
 - (void) getPrimitivesOn: (NSMutableArray *)primitives
             referencesOn: (NSMutableArray *)references
 {
-  NSEnumerator *iter;
-  iter = [self objectEnumerator];
-  GdsElement *element;
-  while ((element = [iter nextObject]) != nil)
+  for (GdsElement *element in self)
     {
       if ([element isReference])
         {

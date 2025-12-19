@@ -4,6 +4,7 @@
 #import "GdsFeelCore/NSArray+Elements.h"
 #import "GdsFeelCore/GdsLayer.h"
 #import "GdsElementDrawer.h"
+#import "GdsElement+Drawing.h"
 
 NSString *GdsStructureDidChangeNotification
   = @"GdsStructureDidChangeNotification";
@@ -84,13 +85,13 @@ DistanceFromPoints(NSPoint a, NSPoint b);
   if (oldStructure == structure)
     return;
   ASSIGN(_structure, structure);
-  [[NSNotificationCenter defaultCenter]
-   postNotificationName: GdsStructureDidChangeNotification
-                 object: self];
   ASSIGN(_viewport, [[GdsViewport alloc] initWithStructure: _structure]);
   [self viewFrameChanged: (NSNotification *) nil];
   [[self viewport] fit];
   [self setNeedsDisplay: YES];
+  [[NSNotificationCenter defaultCenter]
+   postNotificationName: GdsStructureDidChangeNotification
+                 object: self];
 }
 
 - (GdsViewport *) viewport
@@ -116,14 +117,22 @@ DistanceFromPoints(NSPoint a, NSPoint b);
     }
 }
 
-- (void) drawElements: (NSArray *)elements
+- (void) drawElements: (NSArray *)elements transform: tx
 {
   NSMutableArray *primitives;
   NSMutableArray *references;
 
   primitives = [NSMutableArray new];
   references = [NSMutableArray new];
-  [elements getPrimitivesOn: primitives referencesOn: references];
+  [elements getPrimitivesOn:primitives referencesOn:references];
+  if (tx != nil)
+    {
+      [tx concat];
+    }
+  else 
+    {
+      [[_viewport transform] concat];
+    }
   [self basicDrawElements: primitives];
   [self basicDrawElements: references];
   RELEASE(primitives);
@@ -169,12 +178,8 @@ DistanceFromPoints(NSPoint a, NSPoint b);
 @implementation GdsStructureView (Drawing)
 - (void) basicDrawElements: (NSArray *)elements
 {
-  GdsElement   *element;
-  NSEnumerator *iter;
-
-  iter = [elements objectEnumerator];
-  [[NSColor whiteColor] set];
-  while ((element = [iter nextObject]) != nil)
+  //  [[_viewport transform] concat];
+  for (GdsElement *element in elements) 
     {
       [self drawElement: element];
     }
@@ -198,7 +203,7 @@ DistanceFromPoints(NSPoint a, NSPoint b);
 
   NSDate *startTime = [NSDate date];
 
-  [self drawElements: [_structure elements]];
+  [self drawElements: [_structure elements] transform: nil];
 
   NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow];
   NSString      *str = [NSString
@@ -213,23 +218,11 @@ DistanceFromPoints(NSPoint a, NSPoint b);
   return [NSColor blackColor];
 }
 
-- (void) drawElement: (GdsElement *)element
+- (void)drawElement: (GdsElement *)element
 {
-  GdsElementDrawer *drawer;
-  Class             drawerClass;
-  drawer = [[element extension] objectForKey:@"drawer"];
-  if (drawer == nil) 
-    {      
-      drawerClass = [GdsElementDrawer drawerClassForElement: element];
-      if (drawerClass == Nil)
-        {
-          return;
-        }
-      drawer = [[drawerClass alloc] initWithElement:element view:self];
-      [[element extension] setObject: drawer forKey: @"drawer"];
-    }
-  [drawer fullDraw];
+  [element fullDrawOn: self];  
 }
+
 @end // (Drawing)
 
 @implementation GdsStructureView (Events)

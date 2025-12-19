@@ -52,7 +52,7 @@ APP_NAME = GdsFeel
 ${APP_NAME}_OBJC_FILES = \
 	AppDelegate.m \
 	GdsStructureView.m \
-	GdsElementDrawer.m \
+	GdsElement+Drawing.m \
 	GdsLibraryDocument.m \
 	main.m
 ${APP_NAME}_RESOURCE_FILES = \
